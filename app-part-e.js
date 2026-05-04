@@ -1107,6 +1107,7 @@ async function replaceData(ev){
       data=parsed.data||parsed;
     }
     const merged=Object.assign(defaultState(),data,{settings:Object.assign(defaultState().settings,data.settings||{},{showInDashboard:Object.assign(defaultState().settings.showInDashboard,(data.settings||{}).showInDashboard||{})})});
+    embeddedSupabaseDefaults(merged.settings);
     state=merged;
     await saveState();
     toast('הנתונים הוחלפו','success');

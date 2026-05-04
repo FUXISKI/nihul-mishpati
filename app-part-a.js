@@ -11,8 +11,20 @@ let pendingImportEncrypted=null;
 let pendingReplaceEncrypted=null;
 let mergeDecisions={};
 
+function embeddedSupabaseDefaults(intoSettings){
+  if(!intoSettings||typeof intoSettings!=='object')return;
+  const b=typeof window!=='undefined'&&window.__NIHUL_BUILD__;
+  if(!b||typeof b!=='object')return;
+  const url=typeof b.supabaseUrl==='string'?b.supabaseUrl.trim().replace(/\/$/,''):'';
+  const anon=typeof b.supabaseAnonKey==='string'?b.supabaseAnonKey.trim():'';
+  const email=typeof b.supabaseAuthEmail==='string'?b.supabaseAuthEmail.trim().toLowerCase():'';
+  if(url&&!intoSettings.supabaseUrl)intoSettings.supabaseUrl=url;
+  if(anon&&!intoSettings.supabaseAnonKey)intoSettings.supabaseAnonKey=anon;
+  if(email&&!intoSettings.supabaseAuthEmail)intoSettings.supabaseAuthEmail=email;
+}
+
 function defaultState(){
-  return{
+  const st={
     accounts:[],
     categories:[],
     transactions:[],checks:[],recurring:[],budgets:[],tasks:[],events:[],
@@ -34,6 +46,8 @@ function defaultState(){
     },
     deviceId:'dev_'+Math.random().toString(36).substring(2,10)
   };
+  embeddedSupabaseDefaults(st.settings);
+  return st;
 }
 
 async function saveState(){
@@ -52,7 +66,7 @@ async function loadState(password){
   const data=JSON.parse(json);
   const def=defaultState();
   const ds=data.settings||{};
-  return Object.assign(def,data,{settings:Object.assign(def.settings,ds,{
+  const out=Object.assign(def,data,{settings:Object.assign(def.settings,ds,{
     showInDashboard:Object.assign(def.settings.showInDashboard,(ds).showInDashboard||{}),
     myName:ds.myName||'',
     partnerName:ds.partnerName||'',
@@ -64,6 +78,8 @@ async function loadState(password){
     supabaseAnonKey:typeof ds.supabaseAnonKey==='string'?ds.supabaseAnonKey:'',
     supabaseAuthEmail:typeof ds.supabaseAuthEmail==='string'?ds.supabaseAuthEmail:(typeof ds.cloudVaultEmail==='string'?ds.cloudVaultEmail:'')
   })});
+  embeddedSupabaseDefaults(out.settings);
+  return out;
 }
 
 function defaultUiLabels(){

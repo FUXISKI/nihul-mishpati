@@ -5,7 +5,24 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dir = __dirname;
 
+function buildEmbedPayload() {
+  return {
+    supabaseUrl: (process.env.PUBLIC_SUPABASE_URL || '').trim().replace(/\/$/, ''),
+    supabaseAnonKey: (process.env.PUBLIC_SUPABASE_ANON_KEY || '').trim(),
+    supabaseAuthEmail: (process.env.PUBLIC_SUPABASE_AUTH_EMAIL || '').trim().toLowerCase(),
+  };
+}
+
+function injectBuildEmbed(html) {
+  const embedJson = JSON.stringify(buildEmbedPayload()).replace(/</g, '\\u003c');
+  const embedTag = `<script id="nihul-build-embed">window.__NIHUL_BUILD__=${embedJson};<\/script>`;
+  const embedRe = /<script id="nihul-build-embed">[\s\S]*?<\/script>/;
+  if (embedRe.test(html)) return html.replace(embedRe, embedTag);
+  return html.replace('<head>', `<head>\n${embedTag}`);
+}
+
 let html = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
+html = injectBuildEmbed(html);
 const css = fs.readFileSync(path.join(dir, 'app.css'), 'utf8');
 const jsFiles = [
   'vendor-core.js',
