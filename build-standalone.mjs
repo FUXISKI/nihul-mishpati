@@ -80,6 +80,16 @@ fs.mkdirSync(dist, { recursive: true });
 fs.writeFileSync(path.join(dist, 'index.html'), html, 'utf8');
 fs.copyFileSync(path.join(dir, 'sw.js'), path.join(dist, 'sw.js'));
 
+const iconsSrc = path.join(dir, 'icons');
+const iconsDist = path.join(dist, 'icons');
+if (fs.existsSync(iconsSrc)) {
+  fs.mkdirSync(iconsDist, { recursive: true });
+  for (const f of fs.readdirSync(iconsSrc)) {
+    if (!f.endsWith('.png')) continue;
+    fs.copyFileSync(path.join(iconsSrc, f), path.join(iconsDist, f));
+  }
+}
+
 const readmeDist = path.join(dist, 'README.txt');
 const readmeText = `ניהול משפחתי — ערכת הפצה
 ========================

@@ -1125,24 +1125,28 @@ function confirmFullWipe(){
 
 async function init(){
   const manifest={
+    id:location.origin+'/',
     name:'מערכת פנימית',
     short_name:'פנימי',
     description:'תקציב, יומן ומשימות — נתונים מקומיים',
     start_url:'./',
+    scope:'./',
     display:'standalone',
+    display_override:['standalone','minimal-ui'],
     orientation:'portrait',
     background_color:'#efe7df',
     theme_color:'#efe7df',
     lang:'he',
     dir:'rtl',
     icons:[
-      {src:`data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23fcf9f5'/><stop offset='1' stop-color='%23e5d8ca'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23bg)'/><rect width='100' height='100' rx='22' fill='none' stroke='%23a08f7a' stroke-width='1.4' opacity='0.55'/><text x='28' y='60' text-anchor='middle' font-size='40' fill='%236b4a38' opacity='0.28' font-family='Georgia,serif' font-weight='700'>₪</text><text x='73' y='56' text-anchor='middle' font-size='30' fill='%23403868' opacity='0.34' font-family='system-ui,Arial,sans-serif' font-weight='800'>$</text><rect x='16' y='39' width='48' height='36' rx='8' fill='%23c4879c' opacity='0.62' transform='rotate(-5.5 40 57)'/><rect x='20' y='34' width='48' height='36' rx='8' fill='%238a9bd4' opacity='0.66' transform='rotate(-2 44 52)'/><rect x='24' y='29' width='48' height='36' rx='8' fill='%23fffdfa' opacity='1' stroke='%23908070' stroke-width='1.1'/><path d='M60 22.5 A19.5 19.5 0 0 1 81 44' fill='none' stroke='%23176b52' stroke-width='2.2' stroke-linecap='round' opacity='0.95'/><g transform='translate(52,20)'><rect x='0' y='0' width='16' height='17' rx='2.4' fill='%23dff5ec' stroke='%230d5c44' stroke-width='1.2'/><path d='M0 6h16M5.5 10h7' stroke='%230d5c44' stroke-width='1.1' stroke-linecap='round'/></g><g transform='translate(41,28) rotate(33)'><path d='M0 0l8.5 2.4 2.3 8-7.5-3z' fill='%234a5f73'/><path d='M0 0l-3-8.8' stroke='%232f3d4a' stroke-width='1.45' stroke-linecap='round'/></g><text x='88' y='25' text-anchor='end' font-size='15' font-family='system-ui,-apple-system,BlinkMacSystemFont,sans-serif' font-weight='700' fill='%232e2133' opacity='0.88'>Y</text><text x='12' y='91' text-anchor='start' font-size='15' font-family='system-ui,-apple-system,BlinkMacSystemFont,sans-serif' font-weight='700' fill='%232e2133' opacity='0.88'>F</text></svg>`,sizes:'192x192',type:'image/svg+xml',purpose:'any maskable'},
-      {src:`data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23fcf9f5'/><stop offset='1' stop-color='%23e5d8ca'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23bg)'/><rect width='100' height='100' rx='22' fill='none' stroke='%23a08f7a' stroke-width='1.4' opacity='0.55'/><text x='28' y='60' text-anchor='middle' font-size='40' fill='%236b4a38' opacity='0.28' font-family='Georgia,serif' font-weight='700'>₪</text><text x='73' y='56' text-anchor='middle' font-size='30' fill='%23403868' opacity='0.34' font-family='system-ui,Arial,sans-serif' font-weight='800'>$</text><rect x='16' y='39' width='48' height='36' rx='8' fill='%23c4879c' opacity='0.62' transform='rotate(-5.5 40 57)'/><rect x='20' y='34' width='48' height='36' rx='8' fill='%238a9bd4' opacity='0.66' transform='rotate(-2 44 52)'/><rect x='24' y='29' width='48' height='36' rx='8' fill='%23fffdfa' opacity='1' stroke='%23908070' stroke-width='1.1'/><path d='M60 22.5 A19.5 19.5 0 0 1 81 44' fill='none' stroke='%23176b52' stroke-width='2.2' stroke-linecap='round' opacity='0.95'/><g transform='translate(52,20)'><rect x='0' y='0' width='16' height='17' rx='2.4' fill='%23dff5ec' stroke='%230d5c44' stroke-width='1.2'/><path d='M0 6h16M5.5 10h7' stroke='%230d5c44' stroke-width='1.1' stroke-linecap='round'/></g><g transform='translate(41,28) rotate(33)'><path d='M0 0l8.5 2.4 2.3 8-7.5-3z' fill='%234a5f73'/><path d='M0 0l-3-8.8' stroke='%232f3d4a' stroke-width='1.45' stroke-linecap='round'/></g><text x='88' y='25' text-anchor='end' font-size='15' font-family='system-ui,-apple-system,BlinkMacSystemFont,sans-serif' font-weight='700' fill='%232e2133' opacity='0.88'>Y</text><text x='12' y='91' text-anchor='start' font-size='15' font-family='system-ui,-apple-system,BlinkMacSystemFont,sans-serif' font-weight='700' fill='%232e2133' opacity='0.88'>F</text></svg>`,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}
+      {src:'./icons/icon-192.png',sizes:'192x192',type:'image/png',purpose:'any'},
+      {src:'./icons/icon-512.png',sizes:'512x512',type:'image/png',purpose:'any'},
+      {src:'./icons/icon-512.png',sizes:'512x512',type:'image/png',purpose:'maskable'}
     ],
     shortcuts:[
-      {name:'הוצאה חדשה',short_name:'הוצאה',url:'./?action=new_tx',icons:[{src:`data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' rx='20' fill='%23b84a3e'/><text x='48' y='66' text-anchor='middle' font-size='52' fill='white'>−</text></svg>`,sizes:'96x96'}]},
-      {name:'הכנסה חדשה',short_name:'הכנסה',url:'./?action=new_income',icons:[{src:`data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' rx='20' fill='%234a7c59'/><text x='48' y='66' text-anchor='middle' font-size='52' fill='white'>+</text></svg>`,sizes:'96x96'}]},
-      {name:'משימה חדשה',short_name:'משימה',url:'./?action=new_task',icons:[{src:`data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' rx='20' fill='%233d6b8c'/><text x='48' y='66' text-anchor='middle' font-size='52' fill='white'>✓</text></svg>`,sizes:'96x96'}]}
+      {name:'הוצאה חדשה',short_name:'הוצאה',url:'./?action=new_tx',icons:[{src:'./icons/icon-192.png',sizes:'192x192',type:'image/png'}]},
+      {name:'הכנסה חדשה',short_name:'הכנסה',url:'./?action=new_income',icons:[{src:'./icons/icon-192.png',sizes:'192x192',type:'image/png'}]},
+      {name:'משימה חדשה',short_name:'משימה',url:'./?action=new_task',icons:[{src:'./icons/icon-192.png',sizes:'192x192',type:'image/png'}]}
     ]
   };
   const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
