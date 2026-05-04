@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#efe7df">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="מערכת פנימית">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="מערכת פנימית">
+<title>מערכת פנימית</title>
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23fcf9f5'/><stop offset='1' stop-color='%23e5d8ca'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23bg)'/><rect width='100' height='100' rx='22' fill='none' stroke='%23a08f7a' stroke-width='1.4' opacity='0.55'/><text x='28' y='60' text-anchor='middle' font-size='40' fill='%236b4a38' opacity='0.28' font-family='Georgia,serif' font-weight='700'>₪</text><text x='73' y='56' text-anchor='middle' font-size='30' fill='%23403868' opacity='0.34' font-family='system-ui,Arial,sans-serif' font-weight='800'>$</text><rect x='16' y='39' width='48' height='36' rx='8' fill='%23c4879c' opacity='0.62' transform='rotate(-5.5 40 57)'/><rect x='20' y='34' width='48' height='36' rx='8' fill='%238a9bd4' opacity='0.66' transform='rotate(-2 44 52)'/><rect x='24' y='29' width='48' height='36' rx='8' fill='%23fffdfa' opacity='1' stroke='%23908070' stroke-width='1.1'/><path d='M60 22.5 A19.5 19.5 0 0 1 81 44' fill='none' stroke='%23176b52' stroke-width='2.2' stroke-linecap='round' opacity='0.95'/><g transform='translate(52,20)'><rect x='0' y='0' width='16' height='17' rx='2.4' fill='%23dff5ec' stroke='%230d5c44' stroke-width='1.2'/><path d='M0 6h16M5.5 10h7' stroke='%230d5c44' stroke-width='1.1' stroke-linecap='round'/></g><g transform='translate(41,28) rotate(33)'><path d='M0 0l8.5 2.4 2.3 8-7.5-3z' fill='%234a5f73'/><path d='M0 0l-3-8.8' stroke='%232f3d4a' stroke-width='1.45' stroke-linecap='round'/></g><text x='88' y='25' text-anchor='end' font-size='15' font-family='system-ui,-apple-system,BlinkMacSystemFont,sans-serif' font-weight='700' fill='%232e2133' opacity='0.88'>Y</text><text x='12' y='91' text-anchor='start' font-size='15' font-family='system-ui,-apple-system,BlinkMacSystemFont,sans-serif' font-weight='700' fill='%232e2133' opacity='0.88'>F</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23fcf9f5'/><stop offset='1' stop-color='%23e5d8ca'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23bg)'/><rect width='100' height='100' rx='22' fill='none' stroke='%23a08f7a' stroke-width='1.4' opacity='0.55'/><text x='28' y='60' text-anchor='middle' font-size='40' fill='%236b4a38' opacity='0.28' font-family='Georgia,serif' font-weight='700'>₪</text><text x='73' y='56' text-anchor='middle' font-size='30' fill='%23403868' opacity='0.34' font-family='system-ui,Arial,sans-serif' font-weight='800'>$</text><rect x='16' y='39' width='48' height='36' rx='8' fill='%23c4879c' opacity='0.62' transform='rotate(-5.5 40 57)'/><rect x='20' y='34' width='48' height='36' rx='8' fill='%238a9bd4' opacity='0.66' transform='rotate(-2 44 52)'/><rect x='24' y='29' width='48' height='36' rx='8' fill='%23fffdfa' opacity='1' stroke='%23908070' stroke-width='1.1'/><path d='M60 22.5 A19.5 19.5 0 0 1 81 44' fill='none' stroke='%23176b52' stroke-width='2.2' stroke-linecap='round' opacity='0.95'/><g transform='translate(52,20)'><rect x='0' y='0' width='16' height='17' rx='2.4' fill='%23dff5ec' stroke='%230d5c44' stroke-width='1.2'/><path d='M0 6h16M5.5 10h7' stroke='%230d5c44' stroke-width='1.1' stroke-linecap='round'/></g><g transform='translate(41,28) rotate(33)'><path d='M0 0l8.5 2.4 2.3 8-7.5-3z' fill='%234a5f73'/><path d='M0 0l-3-8.8' stroke='%232f3d4a' stroke-width='1.45' stroke-linecap='round'/></g><text x='88' y='25' text-anchor='end' font-size='15' font-family='system-ui,-apple-system,BlinkMacSystemFont,sans-serif' font-weight='700' fill='%232e2133' opacity='0.88'>Y</text><text x='12' y='91' text-anchor='start' font-size='15' font-family='system-ui,-apple-system,BlinkMacSystemFont,sans-serif' font-weight='700' fill='%232e2133' opacity='0.88'>F</text></svg>">
+<link rel="manifest" id="manifest-link">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- Lock screen -->
+<div class="lock-screen" id="lockScreen" style="display:none">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-logo">מערכת פנימית</div>
+    <div class="lock-sub">הזן סיסמה לפתיחה</div>
+    <input type="password" class="lock-input" id="lockInput" inputmode="numeric" autocomplete="off">
+    <div class="lock-error" id="lockError"></div>
+    <button class="lock-btn" onclick="tryUnlock()">פתח</button>
+    <button class="lock-bio-btn" id="lockBioBtn" onclick="tryBiometric()" style="display:none">👆 פתיחה ביומטרית</button>
+    <div class="lock-attempts" id="lockAttempts"></div>
+  </div>
+</div>
+
+<!-- Setup screen -->
+<div class="lock-screen" id="setupScreen" style="display:none">
+  <div class="lock-box">
+    <div class="lock-icon">✨</div>
+    <div class="lock-logo">ברוכים הבאים</div>
+    <div class="lock-sub">סיסמה מצפינה את הנתונים במכשיר. איך קוראים לך? השם יופיע בברוכים הבאים (ניתן לשנות בהגדרות).</div>
+    <label class="field" style="display:block;text-align:right;margin-bottom:8px"><span style="font-size:11px;font-weight:600;color:var(--ink-soft)">השם שלך</span>
+    <input type="text" class="lock-input lock-input-text" id="setupMyName" autocomplete="name" placeholder="">
+    </label>
+    <input type="password" class="lock-input" id="setupInput1" inputmode="numeric" placeholder="">
+    <input type="password" class="lock-input" id="setupInput2" inputmode="numeric" placeholder="">
+    <label class="field" style="display:block;text-align:right;margin-bottom:4px"><span style="font-size:11px;color:var(--ink-mute)">כינוי נוסף (לא חובה — מופיע רק בהגדרות אם תרצו)</span>
+    <input type="text" class="lock-input lock-input-text" id="setupPartnerName" autocomplete="off" placeholder=""></label>
+    <div class="lock-error" id="setupError"></div>
+    <button class="lock-btn" onclick="completeSetup()">המשך</button>
+    <div style="font-size:11px;color:var(--ink-mute);margin-top:12px;line-height:1.5">⚠️ אם תשכח את הסיסמה - לא ניתן לשחזר את הנתונים. שמור אותה במקום בטוח.</div>
+  </div>
+</div>
+
+<div class="mobile-header">
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+  <h1 id="mobileTitle">לוח בקרה</h1>
+  <button class="mobile-menu-btn" onclick="lockNow()" title="נעל">🔒</button>
+</div>
+
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<div class="app" id="mainApp" style="display:none">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <h1>מערכת פנימית</h1>
+      <p>תקציב · יומן · משימות</p>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')"><span class="icon">⌂</span><span>לוח בקרה</span></button>
+      <div class="nav-section-title">פיננסי</div>
+      <button class="nav-item" data-page="transactions" onclick="navigate('transactions')"><span class="icon">⇅</span><span>תנועות</span></button>
+      <button class="nav-item" data-page="recurring" onclick="navigate('recurring')"><span class="icon">↻</span><span>קבועים</span></button>
+      <button class="nav-item" data-page="installments" onclick="navigate('installments')"><span class="icon">▦</span><span>תשלומים והלוואות</span></button>
+      <button class="nav-item" data-page="future" onclick="navigate('future')"><span class="icon">◷</span><span>תזרים עתידי</span></button>
+      <button class="nav-item" data-page="checks" onclick="navigate('checks')"><span class="icon">✎</span><span>צ'קים דחויים</span></button>
+      <button class="nav-item" data-page="accounts" onclick="navigate('accounts')"><span class="icon">▣</span><span>חשבונות</span></button>
+      <button class="nav-item" data-page="budgets" onclick="navigate('budgets')"><span class="icon">◉</span><span>תקציבים</span></button>
+      <button class="nav-item" data-page="categories" onclick="navigate('categories')"><span class="icon">◈</span><span>קטגוריות</span></button>
+      <div class="nav-section-title">יומן ומשימות</div>
+      <button class="nav-item" data-page="calendar" onclick="navigate('calendar')"><span class="icon">▦</span><span>יומן</span></button>
+      <button class="nav-item" data-page="tasks" onclick="navigate('tasks')"><span class="icon">✓</span><span>משימות</span></button>
+      <div class="nav-section-title">מערכת</div>
+      <button class="nav-item" data-page="settings" onclick="navigate('settings')"><span class="icon">⚙</span><span>הגדרות</span></button>
+    </nav>
+    <div class="nav-footer">
+      <button class="sync-btn" onclick="openModal('syncModal')">⇅ גיבוי בין מכשירים</button>
+      <button class="sync-btn" onclick="lockNow()">🔒 נעל עכשיו</button>
+    </div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<button class="fab" id="fab" onclick="toggleFabMenu()">+</button>
+<div class="fab-menu" id="fabMenu">
+  <button class="fab-menu-item" onclick="hideFabMenu();openTxModal(null,{type:'expense'})">💸 הוצאה</button>
+  <button class="fab-menu-item" onclick="hideFabMenu();openTxModal(null,{type:'income'})">💰 הכנסה</button>
+  <button class="fab-menu-item" onclick="hideFabMenu();openTaskModal()">✓ משימה</button>
+  <button class="fab-menu-item" onclick="hideFabMenu();openEventModal()">📅 אירוע</button>
+</div>
+
+<div class="toast" id="toast"></div>
+<!-- TX Modal -->
+<div class="modal-bg" id="txModal">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <div class="modal-title" id="txModalTitle">תנועה חדשה</div>
+      <button class="close-btn" onclick="closeModal('txModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="txId">
+      <div class="form-row form-grid-3">
+        <div class="field">
+          <label>סוג</label>
+          <select id="txType" onchange="updateTxFormVisibility()">
+            <option value="expense">הוצאה</option>
+            <option value="income">הכנסה</option>
+            <option value="transfer">העברה בין חשבונות</option>
+          </select>
+        </div>
+        <div class="field"><label>תאריך</label><input type="date" id="txDate"></div>
+        <div class="field">
+          <label>סטטוס</label>
+          <select id="txStatus">
+            <option value="completed">בוצע</option>
+            <option value="pending">צפוי / עתידי</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row form-grid-3">
+        <div class="field"><label>סכום</label><input type="number" step="0.01" id="txAmount" inputmode="decimal" placeholder="0.00"></div>
+        <div class="field">
+          <label>מטבע</label>
+          <select id="txCurrency"><option value="ILS">₪ שקל</option><option value="USD">$ דולר</option></select>
+        </div>
+        <div class="field">
+          <label>אמצעי תשלום</label>
+          <select id="txPaymentMethod" onchange="updateTxFormVisibility()">
+            <option value="cash">מזומן/העברה</option>
+            <option value="credit">אשראי</option>
+            <option value="bit">ביט / Pay</option>
+            <option value="check">צ'ק</option>
+            <option value="other">אחר</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row form-grid-2">
+        <div class="field"><label>חשבון</label><select id="txAccount"></select></div>
+        <div class="field" id="txToAccountField" style="display:none"><label>חשבון יעד</label><select id="txToAccount"></select></div>
+        <div class="field" id="txCategoryField"><label>קטגוריה</label><select id="txCategory"></select></div>
+      </div>
+      <div class="form-row"><div class="field"><label>תיאור</label><input type="text" id="txDescription" placeholder="לדוגמה: סופר רמי לוי"></div></div>
+      
+      <div class="card" id="txInstallmentsCard" style="background:var(--bg-soft);margin-bottom:10px;display:none">
+        <label class="field-toggle" style="margin-bottom:8px">
+          <input type="checkbox" id="txHasInstallments" onchange="updateTxFormVisibility()">
+          <span style="font-weight:600;font-size:13px">תשלומים מרובים / הלוואה עם ריבית</span>
+        </label>
+        <div id="txInstallmentsFields" style="display:none">
+          <div class="form-row form-grid-3">
+            <div class="field"><label>מספר תשלומים</label><input type="number" min="2" max="120" id="txInstallmentCount" value="3" oninput="recalcInstallments()"></div>
+            <div class="field"><label>תאריך תשלום ראשון</label><input type="date" id="txFirstInstallment" onchange="recalcInstallments()"></div>
+            <div class="field"><label>ריבית שנתית %</label><input type="number" step="0.01" id="txInterestRate" placeholder="0" oninput="recalcInstallments()"></div>
+          </div>
+          <div class="form-row form-grid-2">
+            <div class="field"><label>סכום לתשלום</label><input type="text" id="txInstallmentAmount" readonly style="background:var(--line-soft);font-weight:600"></div>
+            <div class="field"><label>סך הכל לתשלום</label><input type="text" id="txTotalToPay" readonly style="background:var(--line-soft);font-weight:600"></div>
+          </div>
+          <div class="help" id="txInterestHelp" style="font-size:11px;color:var(--ink-mute)"></div>
+        </div>
+      </div>
+      
+      <input type="hidden" id="txOwner" value="me">
+      <div class="form-row">
+        <div class="field">
+          <label>תיוג</label>
+          <select id="txTag"><option value="variable">משתנה</option><option value="fixed">קבוע</option></select>
+        </div>
+      </div>
+      <div class="form-row"><div class="field"><label>הערות</label><textarea id="txNotes"></textarea></div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('txModal')">ביטול</button>
+      <button class="btn btn-danger" id="txDeleteBtn" onclick="deleteTx()" style="display:none">מחק</button>
+      <button class="btn btn-primary" onclick="saveTx()">שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Recurring Modal -->
+<div class="modal-bg" id="recurringModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="recurringModalTitle">הכנסה/הוצאה קבועה</div>
+      <button class="close-btn" onclick="closeModal('recurringModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="recurringId">
+      <div class="form-row form-grid-2">
+        <div class="field">
+          <label>סוג</label>
+          <select id="recurringType"><option value="expense">הוצאה קבועה</option><option value="income">הכנסה קבועה</option></select>
+        </div>
+        <div class="field"><label>שם</label><input type="text" id="recurringName" placeholder="חשמל, משכורת..."></div>
+      </div>
+      <div class="form-row form-grid-3">
+        <div class="field"><label>סכום</label><input type="number" step="0.01" inputmode="decimal" id="recurringAmount"></div>
+        <div class="field">
+          <label>מטבע</label>
+          <select id="recurringCurrency"><option value="ILS">₪ שקל</option><option value="USD">$ דולר</option></select>
+        </div>
+        <div class="field">
+          <label>תדירות</label>
+          <select id="recurringFrequency">
+            <option value="monthly">חודשי</option>
+            <option value="bimonthly">דו-חודשי</option>
+            <option value="quarterly">רבעוני</option>
+            <option value="yearly">שנתי</option>
+            <option value="weekly">שבועי</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row form-grid-2">
+        <div class="field"><label>חשבון</label><select id="recurringAccount"></select></div>
+        <div class="field"><label>קטגוריה</label><select id="recurringCategory"></select></div>
+      </div>
+      <div class="form-row form-grid-2">
+        <div class="field"><label>יום בחודש (1-31)</label><input type="number" min="1" max="31" id="recurringDayOfMonth" value="1"><div class="help">בחודשים קצרים יידחה ליום האחרון</div></div>
+        <div class="field"><label>תאריך התחלה</label><input type="date" id="recurringStartDate"></div>
+      </div>
+      <div class="form-row form-grid-2">
+        <div class="field"><label>תאריך סיום (אופציונלי)</label><input type="date" id="recurringEndDate"></div>
+        <div class="field">
+          <label>פעיל</label>
+          <select id="recurringActive"><option value="1">כן</option><option value="0">לא</option></select>
+        </div>
+      </div>
+      <div class="form-row"><div class="field"><label>הערות</label><textarea id="recurringNotes"></textarea></div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('recurringModal')">ביטול</button>
+      <button class="btn btn-danger" id="recurringDeleteBtn" onclick="deleteRecurring()" style="display:none">מחק</button>
+      <button class="btn btn-primary" onclick="saveRecurring()">שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Installment Detail Modal -->
+<div class="modal-bg" id="installmentDetailModal">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <div class="modal-title" id="instDetailTitle">פרטי תשלומים</div>
+      <button class="close-btn" onclick="closeModal('installmentDetailModal')">×</button>
+    </div>
+    <div class="modal-body" id="instDetailBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('installmentDetailModal')">סגור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Check Modal -->
+<div class="modal-bg" id="checkModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="checkModalTitle">צ'ק חדש</div>
+      <button class="close-btn" onclick="closeModal('checkModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="checkId">
+      <div class="form-row form-grid-2">
+        <div class="field">
+          <label>כיוון</label>
+          <select id="checkDirection" onchange="document.getElementById('checkPartyLabel').textContent=this.value==='incoming'?'שם הנותן':'שם המוטב'">
+            <option value="incoming">צ'ק שקיבלנו</option>
+            <option value="outgoing">צ'ק שנתנו</option>
+          </select>
+        </div>
+        <div class="field"><label>תאריך פירעון</label><input type="date" id="checkDueDate"></div>
+      </div>
+      <div class="form-row form-grid-2">
+        <div class="field"><label>סכום</label><input type="number" step="0.01" inputmode="decimal" id="checkAmount"></div>
+        <div class="field">
+          <label>מטבע</label>
+          <select id="checkCurrency"><option value="ILS">₪ שקל</option><option value="USD">$ דולר</option></select>
+        </div>
+      </div>
+      <div class="form-row form-grid-2">
+        <div class="field"><label>חשבון</label><select id="checkAccount"></select></div>
+        <div class="field"><label>מספר צ'ק</label><input type="text" id="checkNumber"></div>
+      </div>
+      <div class="form-row"><div class="field"><label id="checkPartyLabel">שם הנותן</label><input type="text" id="checkParty"></div></div>
+      <input type="hidden" id="checkOwner" value="me">
+      <div class="form-row">
+        <div class="field">
+          <label>סטטוס</label>
+          <select id="checkStatus">
+            <option value="pending">ממתין לפירעון</option>
+            <option value="cleared">נפרע</option>
+            <option value="bounced">חזר</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><div class="field"><label>הערות</label><textarea id="checkNotes"></textarea></div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('checkModal')">ביטול</button>
+      <button class="btn btn-danger" id="checkDeleteBtn" onclick="deleteCheck()" style="display:none">מחק</button>
+      <button class="btn btn-primary" onclick="saveCheck()">שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Account Modal -->
+<div class="modal-bg" id="accountModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="accountModalTitle">חשבון חדש</div>
+      <button class="close-btn" onclick="closeModal('accountModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="accountId">
+      <div class="form-row"><div class="field"><label>שם החשבון</label><input type="text" id="accountName" placeholder="בנק הפועלים, מזומן..."></div></div>
+      <div class="form-row form-grid-2">
+        <div class="field">
+          <label>סוג</label>
+          <select id="accountType">
+            <option value="checking">עו״ש</option>
+            <option value="savings">חיסכון</option>
+            <option value="cash">מזומן</option>
+            <option value="credit">כרטיס אשראי</option>
+            <option value="other">אחר</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>מטבע</label>
+          <select id="accountCurrency"><option value="ILS">₪ שקל</option><option value="USD">$ דולר</option></select>
+        </div>
+      </div>
+      <div class="form-row form-grid-2">
+        <div class="field"><label>יתרת פתיחה</label><input type="number" step="0.01" inputmode="decimal" id="accountOpeningBalance" value="0"></div>
+        <div class="field"><label>יתרה מינימלית רצויה</label><input type="number" step="0.01" inputmode="decimal" id="accountMinBalance" value="0"><div class="help">להתראות תזרים</div></div>
+      </div>
+      <div class="form-row"><div class="field"><label>הערות</label><textarea id="accountNotes"></textarea></div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('accountModal')">ביטול</button>
+      <button class="btn btn-danger" id="accountDeleteBtn" onclick="deleteAccount()" style="display:none">מחק</button>
+      <button class="btn btn-primary" onclick="saveAccount()">שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal-bg" id="categoryModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="categoryModalTitle">קטגוריה</div>
+      <button class="close-btn" onclick="closeModal('categoryModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="categoryId">
+      <div class="form-row form-grid-2">
+        <div class="field"><label>שם</label><input type="text" id="categoryName"></div>
+        <div class="field">
+          <label>סוג</label>
+          <select id="categoryType"><option value="expense">הוצאה</option><option value="income">הכנסה</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('categoryModal')">ביטול</button>
+      <button class="btn btn-danger" id="categoryDeleteBtn" onclick="deleteCategory()" style="display:none">מחק</button>
+      <button class="btn btn-primary" onclick="saveCategory()">שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Budget Modal -->
+<div class="modal-bg" id="budgetModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="budgetModalTitle">תקציב</div>
+      <button class="close-btn" onclick="closeModal('budgetModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="budgetId">
+      <div class="form-row"><div class="field"><label>קטגוריה</label><select id="budgetCategory"></select></div></div>
+      <div class="form-row form-grid-2">
+        <div class="field"><label>סכום חודשי</label><input type="number" step="0.01" inputmode="decimal" id="budgetAmount"></div>
+        <div class="field">
+          <label>מטבע</label>
+          <select id="budgetCurrency"><option value="ILS">₪ שקל</option><option value="USD">$ דולר</option></select>
+        </div>
+      </div>
+      <div class="form-row"><div class="field"><label>הערות</label><textarea id="budgetNotes"></textarea></div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('budgetModal')">ביטול</button>
+      <button class="btn btn-danger" id="budgetDeleteBtn" onclick="deleteBudget()" style="display:none">מחק</button>
+      <button class="btn btn-primary" onclick="saveBudget()">שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Task Modal -->
+<div class="modal-bg" id="taskModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="taskModalTitle">משימה חדשה</div>
+      <button class="close-btn" onclick="closeModal('taskModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="taskId">
+      <div class="form-row"><div class="field"><label>כותרת</label><input type="text" id="taskTitle" placeholder="מה צריך לעשות?"></div></div>
+      <div class="form-row form-grid-2">
+        <div class="field"><label>תאריך יעד</label><input type="date" id="taskDueDate"></div>
+        <div class="field"><label>שעת התראה</label><input type="time" id="taskReminderTime"></div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>דחיפות</label>
+          <select id="taskPriority"><option value="low">נמוכה</option><option value="med" selected>בינונית</option><option value="high">גבוהה</option></select>
+        </div>
+      </div>
+      <div class="form-row"><div class="field"><label>קישור לפגישה ביומן (המשימה כולה כנושא בפגישה)</label><select id="taskLinkedEvent"></select><div style="font-size:11px;color:var(--ink-mute);margin-top:4px">רשימת האירועים מעודכנת מהיומן. אפשר גם לקשר כל תת-משימה בנפרד למטה.</div></div></div>
+      <div class="form-row"><div class="field"><label>תיאור / הערות</label><textarea id="taskNotes"></textarea></div></div>
+      <div class="form-row">
+        <div class="field">
+          <label>תתי-משימות (ניתן לקשר כל שורה לפגישה)</label>
+          <div id="subtasksList" style="margin-top:6px"></div>
+          <button class="btn btn-ghost btn-sm" onclick="addSubtaskField()" style="margin-top:6px">+ הוסף תת-משימה</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('taskModal')">ביטול</button>
+      <button class="btn btn-danger" id="taskDeleteBtn" onclick="deleteTask()" style="display:none">מחק</button>
+      <button class="btn btn-primary" onclick="saveTask()">שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Event Modal -->
+<div class="modal-bg" id="eventModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="eventModalTitle">אירוע חדש</div>
+      <button class="close-btn" onclick="closeModal('eventModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eventId">
+      <div class="form-row"><div class="field"><label>כותרת / נושא הפגישה</label><input type="text" id="eventTitle" placeholder="לדוגמה: רופא משפחה"></div></div>
+      <div class="form-row"><div class="field"><label>תאריך</label><input type="date" id="eventDate"></div></div>
+      <label class="field-toggle" style="margin-bottom:10px;display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="eventAllDay" onchange="toggleEventTimeFields()">
+        <span>כל היום (ללא שעות)</span>
+      </label>
+      <div class="form-row form-grid-2" id="eventTimeRow">
+        <div class="field"><label>שעת התחלה</label><input type="time" id="eventTime"></div>
+        <div class="field"><label>שעת סיום</label><input type="time" id="eventEndTime"></div>
+      </div>
+      <div class="form-row"><div class="field"><label>מיקום</label><input type="text" id="eventLocation" placeholder="כתובת או קישור"></div></div>
+      <div class="form-row"><div class="field"><label>הערות</label><textarea id="eventNotes"></textarea></div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('eventModal')">ביטול</button>
+      <button class="btn btn-danger" id="eventDeleteBtn" onclick="deleteEvent()" style="display:none">מחק</button>
+      <button class="btn btn-primary" onclick="saveEvent()">שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Day Detail Modal -->
+<div class="modal-bg" id="dayDetailModal">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <div class="modal-title" id="dayDetailTitle">פרטי יום</div>
+      <button class="close-btn" onclick="closeModal('dayDetailModal')">×</button>
+    </div>
+    <div class="modal-body" id="dayDetailBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('dayDetailModal')">סגור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sync Modal -->
+<div class="modal-bg" id="syncModal">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <div class="modal-title">גיבוי בין מכשירים</div>
+      <button class="close-btn" onclick="closeModal('syncModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="tabs">
+        <button class="tab active" data-tab="export" onclick="switchSyncTab('export')">ייצוא גיבוי</button>
+        <button class="tab" data-tab="reports" onclick="switchSyncTab('reports')">דוח תנועות</button>
+        <button class="tab" data-tab="import" onclick="switchSyncTab('import')">ייבוא וסנכרון</button>
+        <button class="tab" data-tab="danger" onclick="switchSyncTab('danger')">איפוס</button>
+      </div>
+      <div id="syncTabExport">
+        <div class="sync-privacy-banner">
+          <div class="sync-privacy-icon" aria-hidden="true">🔒</div>
+          <div>
+            <strong class="sync-privacy-title">בלי שרת, בלי ענן של האפליקציה</strong>
+            <p class="sync-privacy-text">הכל נשמר במכשיר שלכם. הגיבוי הוא קובץ שאתם שולחים בעצמכם (וואטסאפ, מייל וכו׳). אף אחד לא «מושך» את הנתונים מהמכשיר בשבילכם.</p>
+          </div>
+        </div>
+        <div class="sync-steps" role="list">
+          <div class="sync-step" role="listitem"><span class="sync-step-num">1</span><span>יוצרים גיבוי כאן</span></div>
+          <div class="sync-step" role="listitem"><span class="sync-step-num">2</span><span>שולחים את הקובץ לבן/בת הזוג</span></div>
+          <div class="sync-step" role="listitem"><span class="sync-step-num">3</span><span>במכשיר השני: «ייבוא» ובוחרים מה למזג</span></div>
+        </div>
+        <p class="sync-intro">ייצוא הנתונים לקובץ. מומלץ להשאיר הצפנה מסומנת.</p>
+        <div class="form-row form-grid-2">
+          <div class="field">
+            <label>סוג גיבוי</label>
+            <select id="exportRange" onchange="updateExportFields()">
+              <option value="all">גיבוי מלא</option>
+              <option value="range">לפי טווח תאריכים</option>
+              <option value="recent">תקופה אחרונה</option>
+            </select>
+          </div>
+          <div class="field" id="exportRecentField" style="display:none">
+            <label>טווח</label>
+            <select id="exportRecent">
+              <option value="7">שבוע אחרון</option>
+              <option value="30" selected>חודש אחרון</option>
+              <option value="90">3 חודשים</option>
+              <option value="180">חצי שנה</option>
+              <option value="365">שנה</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row form-grid-2" id="exportRangeFields" style="display:none">
+          <div class="field"><label>מתאריך</label><input type="date" id="exportFromDate"></div>
+          <div class="field"><label>עד תאריך</label><input type="date" id="exportToDate"></div>
+        </div>
+        <label class="field-toggle" style="margin-bottom:10px">
+          <input type="checkbox" id="exportEncrypted" checked>
+          <span>הצפן את הקובץ (מומלץ)</span>
+        </label>
+        <div class="sync-actions">
+          <button type="button" class="btn btn-primary btn-block btn-lg" onclick="exportDataShare()">שתף גיבוי (וואטסאפ, מייל…)</button>
+          <button type="button" class="btn btn-secondary btn-block btn-lg" onclick="exportData()">הורד קובץ למכשיר</button>
+        </div>
+        <p class="sync-footnote">אם «שתף» לא מוצג — לוחצים על הורדה ואז שולחים את הקובץ ידנית מהקבצים או מההורדות.</p>
+      </div>
+      <div id="syncTabReports" style="display:none">
+        <p class="sync-intro">דוח קריא לבן אדם — לא JSON. נשענים על אותו <strong>טווח תאריכים</strong> כמו בלשונית «ייצוא גיבוי» למעלה (גיבוי מלא / טווח / תקופה אחרונה).</p>
+        <div class="field" style="margin-bottom:12px">
+          <label>מספר וואטסאפ לשליחה (בלי +, לדוגמה 972501234567)</label>
+          <input type="tel" class="lock-input-text" id="exportWhatsAppPhone" placeholder="972..." dir="ltr" style="text-align:left">
+        </div>
+        <div class="sync-actions">
+          <button type="button" class="btn btn-primary btn-block btn-lg" onclick="exportTransactionsCsv()">הורד לאקסל (CSV)</button>
+          <button type="button" class="btn btn-secondary btn-block btn-lg" onclick="shareTransactionsWhatsApp()">שלח כהודעת וואטסאפ</button>
+          <button type="button" class="btn btn-secondary btn-block btn-lg" onclick="syncTransactionsToGoogleSheets()">סנכרן לגוגל שיטס</button>
+        </div>
+        <p class="sync-footnote" style="margin-top:12px">גוגל שיטס: הגדירו ב«הגדרות» כתובת Web App ומפתח (אופציונלי), והדביקו את הסקריפט מהתיקייה <code style="font-size:11px">google-apps-script</code>. תנועות קיימות לא יוכפלו — לפי מזהה בשורה.</p>
+        <p class="sync-footnote">הודעות וואטסאפ מוגבלות באורך; לרשימות ארוכות השתמשו ב־CSV.</p>
+      </div>
+      <div id="syncTabImport" style="display:none">
+        <p class="sync-intro">בוחרים קובץ שהגיע מהמכשיר השני. תופיע רשימה — אפשר לסמן מה לייבא ומה לדלג.</p>
+        <input type="file" id="importFile" class="file-input" accept=".json,.fmenc" onchange="loadImportFile(event)">
+        <button class="btn btn-secondary btn-block" onclick="document.getElementById('importFile').click()">בחר קובץ גיבוי</button>
+        <div id="importPreview" style="margin-top:14px;display:none"></div>
+      </div>
+      <div id="syncTabDanger" style="display:none">
+        <div class="alert-item alert-danger" style="margin-bottom:14px">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-content"><div class="alert-title">פעולות בלתי הפיכות</div>הפעולות בעמוד זה ימחקו נתונים לצמיתות.</div>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <div class="card-title">החלף הכל</div>
+          <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px">מחיקת הנתונים הנוכחיים והחלפה בקובץ גיבוי</p>
+          <button class="btn btn-danger" onclick="document.getElementById('replaceFile').click()">בחר קובץ להחלפה</button>
+          <input type="file" id="replaceFile" class="file-input" accept=".json,.fmenc" onchange="replaceData(event)">
+        </div>
+        <div class="card">
+          <div class="card-title" style="color:var(--red)">⚠ מחיקת הכל</div>
+          <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px">מחיקת כל הנתונים והסיסמה. האפליקציה תחזור למצב התחלתי.</p>
+          <button class="btn btn-danger" onclick="confirmFullWipe()">מחק הכל</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('syncModal')">סגור</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import Password Modal -->
+<div class="modal-bg" id="importPwdModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">סיסמה לקובץ הגיבוי</div></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:12px">הקובץ מוצפן. הזן את הסיסמה שאיתה הוא נוצר (לרוב הסיסמה של המכשיר שיצר אותו):</p>
+      <div class="field"><input type="password" class="lock-input" id="importPwdInput" inputmode="numeric" style="margin:0"></div>
+      <div class="lock-error" id="importPwdError" style="margin-top:10px"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('importPwdModal')">ביטול</button>
+      <button class="btn btn-primary" onclick="continueImportWithPwd()">המשך</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.min.js"></script>
+<script src="vendor-core.js"></script>
+<script src="app-part-a.js"></script>
+<script src="app-part-b.js"></script>
+<script src="app-part-c.js"></script>
+<script src="app-part-d.js"></script>
+<script src="app-part-e.js"></script>
+<script src="cloud-sync.js"></script>
+
+</body>
+</html>

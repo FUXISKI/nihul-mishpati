@@ -1,0 +1,8 @@
+{
+  "name": "nihul-mishpati",
+  "private": true,
+  "description": "ניהול משפחתי — בנייה לאתר (Vercel)",
+  "scripts": {
+    "build": "node build-standalone.mjs"
+  }
+}

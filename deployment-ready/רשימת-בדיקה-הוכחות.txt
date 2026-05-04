@@ -1,0 +1,26 @@
+העתיקו לפניכם וסמנו ✓ אחרי שביצעתם והוכחתם לעצמכם.
+
+חלק Supabase
+[ ] נכנסתי לפרויקט Supabase ורואה Dashboard
+[ ] הרצתי את כל הקובץ supabase/schema.sql ב-SQL Editor בלי שגיאה
+[ ] ב-Table Editor מופיעה טבלה user_vaults
+[ ] העתקתי Project URL ו-anon key לקובץ טקסט
+[ ] (מומלץ) כיביתי Confirm email ב-Authentication → Providers → Email
+
+חלק GitHub
+[ ] הריפו שלי מכיל את הקבצים: vercel.json, package.json, build-standalone.mjs, supabase/schema.sql
+
+חלק Vercel
+[ ] ייבאתי פרויקט מהריפו ו-Deploy הסתיים בהצלחה
+[ ] פתחתי את כתובת ה-*.vercel.app — נטען מסך האפליקציה
+[ ] (אופציונלי) חיברתי דומיין — https://הדומיין עובד
+
+חלק אפליקציה
+[ ] בהגדרות מילאתי URL + anon + אימייל + סיסמה
+[ ] לחצתי "שמור חיבור לסופבייס"
+[ ] "הרשמה" או "התחברות" — הסטטוס "מחובר"
+[ ] "דחיפה לענן" — הודעת הצלחה
+[ ] ב-Supabase → user_vaults יש שורה עם ciphertext ארוך
+[ ] מדפדפן/מכשיר שני: אותה הגדרה + התחברות + משיכה — הנתונים מופיעים
+
+אם כל הסימונים ✓ — התהליך הושלם.
