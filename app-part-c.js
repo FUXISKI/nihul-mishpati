@@ -155,10 +155,17 @@ function renderTaskItemMini(t){
   </div>`;
 }
 
-let txFilter={type:'all',account:'all',search:'',tag:'all',from:null,to:null,paymentMethod:'all'};
+let txFilter={type:'all',account:'all',search:'',tag:'all',from:null,to:null,paymentMethod:'all',operatorTxStatus:'all'};
 
 function renderTransactions(){
-  let txs=[...state.transactions].filter(t=>t.status==='completed');
+  const op=isOperatorSession();
+  let txs=[...state.transactions];
+  if(op){
+    txs=txs.filter(t=>t.createdByOperatorId===sessionOperatorId);
+    const ost=txFilter.operatorTxStatus||'all';
+    if(ost==='completed')txs=txs.filter(t=>t.status==='completed');
+    else if(ost==='pending')txs=txs.filter(t=>t.status==='pending');
+  }else txs=txs.filter(t=>t.status==='completed');
   if(txFilter.type!=='all')txs=txs.filter(t=>t.type===txFilter.type);
   if(txFilter.account!=='all')txs=txs.filter(t=>t.accountId===txFilter.account||t.toAccountId===txFilter.account);
   if(txFilter.tag!=='all')txs=txs.filter(t=>(t.tag||'variable')===txFilter.tag);
@@ -169,25 +176,29 @@ function renderTransactions(){
   txs.sort((a,b)=>new Date(b.date)-new Date(a.date));
   let totIncIls=0,totExpIls=0;
   txs.forEach(tx=>{
-    if(tx.currency!=='ILS')return;
+    if(tx.status!=='completed'||tx.currency!=='ILS')return;
     if(tx.type==='income')totIncIls+=+tx.amount;
     else if(tx.type==='expense')totExpIls+=+tx.amount;
   });
+  const subExtra=op?` · רק תנועות שנרשמו על ידך`:'';
   return `
     <div class="page-header">
       <div>
         <h1 class="page-title">תנועות</h1>
-        <div class="page-sub">${txs.length} תנועות · הכנסות ${fmtMoney(totIncIls,'ILS')} · הוצאות ${fmtMoney(totExpIls,'ILS')}</div>
+        <div class="page-sub">${txs.length} תנועות${subExtra} · בוצעו (₪): הכנסות ${fmtMoney(totIncIls,'ILS')} · הוצאות ${fmtMoney(totExpIls,'ILS')}</div>
       </div>
       <button class="btn btn-primary" onclick="openTxModal()">+ תנועה חדשה</button>
     </div>
     <div class="card">
       <div class="filters">
         <div class="search-wrap"><input class="search-box" type="text" placeholder="חיפוש..." value="${escapeHtml(txFilter.search)}" oninput="txFilter.search=this.value;render()"></div>
+        ${op?`<button class="filter-pill ${txFilter.operatorTxStatus==='all'?'active':''}" onclick="txFilter.operatorTxStatus='all';render()">הכל</button>
+        <button class="filter-pill ${txFilter.operatorTxStatus==='completed'?'active':''}" onclick="txFilter.operatorTxStatus='completed';render()">בוצע</button>
+        <button class="filter-pill ${txFilter.operatorTxStatus==='pending'?'active':''}" onclick="txFilter.operatorTxStatus='pending';render()">צפוי</button>`:''}
         <button class="filter-pill ${txFilter.type==='all'?'active':''}" onclick="txFilter.type='all';render()">הכל</button>
         <button class="filter-pill ${txFilter.type==='income'?'active':''}" onclick="txFilter.type='income';render()">הכנסות</button>
         <button class="filter-pill ${txFilter.type==='expense'?'active':''}" onclick="txFilter.type='expense';render()">הוצאות</button>
-        <button class="filter-pill ${txFilter.type==='transfer'?'active':''}" onclick="txFilter.type='transfer';render()">העברות</button>
+        ${op?'':`<button class="filter-pill ${txFilter.type==='transfer'?'active':''}" onclick="txFilter.type='transfer';render()">העברות</button>`}
         <select class="filter-select" onchange="txFilter.account=this.value;render()">
           <option value="all">כל החשבונות</option>
           ${state.accounts.map(a=>`<option value="${a.id}" ${txFilter.account===a.id?'selected':''}>${escapeHtml(a.name)}</option>`).join('')}
@@ -207,7 +218,7 @@ function renderTransactions(){
         </select>
         <input type="date" class="filter-date" value="${txFilter.from||''}" onchange="txFilter.from=this.value||null;render()">
         <input type="date" class="filter-date" value="${txFilter.to||''}" onchange="txFilter.to=this.value||null;render()">
-        ${txFilter.from||txFilter.to||txFilter.search||txFilter.type!=='all'||txFilter.account!=='all'||txFilter.tag!=='all'||txFilter.paymentMethod!=='all'?`<button class="btn btn-ghost btn-sm" onclick="txFilter={type:'all',account:'all',search:'',tag:'all',from:null,to:null,paymentMethod:'all'};render()">נקה</button>`:''}
+        ${txFilter.from||txFilter.to||txFilter.search||txFilter.type!=='all'||txFilter.account!=='all'||txFilter.tag!=='all'||txFilter.paymentMethod!=='all'||(op&&txFilter.operatorTxStatus!=='all')?`<button class="btn btn-ghost btn-sm" onclick="txFilter={type:'all',account:'all',search:'',tag:'all',from:null,to:null,paymentMethod:'all',operatorTxStatus:'all'};render()">נקה</button>`:''}
       </div>
       ${txs.length===0?'<div class="empty"><div class="empty-icon">⇅</div><div class="empty-title">אין תנועות תואמות</div></div>':`
         <div class="table-wrap"><table>
@@ -348,6 +359,7 @@ function renderInstallments(){
 }
 
 function openInstallmentDetail(parentId){
+  if(isOperatorSession()){toast('לא זמין במצב מפעיל','error');return}
   const items=state.transactions.filter(t=>t.installmentParentId===parentId).sort((a,b)=>(a.installmentNum||0)-(b.installmentNum||0));
   if(!items.length)return;
   const first=items[0];
@@ -381,6 +393,7 @@ function openInstallmentDetail(parentId){
 }
 
 async function deleteInstallmentPlan(parentId){
+  if(isOperatorSession()){toast('לא זמין במצב מפעיל','error');return}
   state.transactions=state.transactions.filter(t=>t.installmentParentId!==parentId);
   await saveState();
   closeModal('installmentDetailModal');

@@ -89,7 +89,13 @@
       <button class="sync-btn" onclick="lockNow()">🔒 נעל עכשיו</button>
     </div>
   </aside>
-  <main class="main" id="main"></main>
+  <div class="main-column">
+    <div class="operator-mode-bar" id="operatorModeBar" style="display:none">
+      <span id="operatorModeLabel"></span>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="exitOperatorMode()">יציאה ממצב מפעיל</button>
+    </div>
+    <main class="main" id="main"></main>
+  </div>
 </div>
 
 <button class="fab" id="fab" onclick="toggleFabMenu()">+</button>

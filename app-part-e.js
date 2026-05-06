@@ -24,7 +24,7 @@ function updateTxFormVisibility(){
   const isNew=!id;
   toField.style.display=transfer?'block':'none';
   catField.style.display=transfer?'none':'block';
-  const canPlan=isNew&&type==='expense';
+  const canPlan=isNew&&type==='expense'&&!isOperatorSession();
   instCard.style.display=canPlan?'block':'none';
   if(!canPlan){
     document.getElementById('txHasInstallments').checked=false;
@@ -54,6 +54,7 @@ function recalcInstallments(){
 
 function openTxModal(id,opts){
   opts=opts||{};
+  if(isOperatorSession()&&opts.type==='transfer')opts.type='expense';
   refreshAllFormSelectLabels();
   document.getElementById('txModalTitle').textContent=id?'עריכת תנועה':'תנועה חדשה';
   document.getElementById('txDeleteBtn').style.display=id?'inline-flex':'none';
@@ -76,6 +77,10 @@ function openTxModal(id,opts){
   }else{
     const tx=state.transactions.find(t=>t.id===id);
     if(!tx){toast('לא נמצא','error');return}
+    if(isOperatorSession()){
+      if(tx.createdByOperatorId!==sessionOperatorId){toast('תנועה זו לא נרשמה על ידך','error');return}
+      if(tx.type==='transfer'){toast('אין גישה לסוג תנועה זה','error');return}
+    }
     document.getElementById('txDate').value=tx.date;
     document.getElementById('txType').value=tx.type;
     document.getElementById('txStatus').value=tx.status||'completed';
@@ -99,6 +104,15 @@ function openTxModal(id,opts){
     updateTxFormVisibility();
   }
   recalcInstallments();
+  const typeSel=document.getElementById('txType');
+  if(typeSel){
+    if(isOperatorSession()){
+      [...typeSel.options].forEach(o=>{o.disabled=o.value==='transfer'});
+      if(typeSel.value==='transfer'){typeSel.value='expense';updateTxFormVisibility();recalcInstallments()}
+    }else{
+      [...typeSel.options].forEach(o=>{o.disabled=false});
+    }
+  }
   openModal('txModal');
 }
 
@@ -118,6 +132,10 @@ async function saveTx(){
   const tag=document.getElementById('txTag').value;
   const notes=document.getElementById('txNotes').value;
   const hasInst=document.getElementById('txHasInstallments').checked;
+  if(isOperatorSession()){
+    if(type==='transfer'){toast('העברות בין חשבונות אינן זמינות במצב מפעיל','error');return}
+    if(hasInst){toast('תשלומים מרובים אינם זמינים במצב מפעיל','error');return}
+  }
   if(!date){toast('בחר תאריך','error');return}
   if(type!=='transfer'&&!categoryId){toast('בחר קטגוריה','error');return}
   if(type==='transfer'&&(!toAccountId||toAccountId===accountId)){toast('בחר חשבון יעד שונה','error');return}
@@ -126,6 +144,7 @@ async function saveTx(){
   if(id){
     const tx=state.transactions.find(t=>t.id===id);
     if(!tx){toast('לא נמצא','error');return}
+    if(isOperatorSession()&&tx.createdByOperatorId!==sessionOperatorId){toast('אין הרשאה לעדכן תנועה זו','error');return}
     Object.assign(tx,{type,date,status,amount,currency,paymentMethod,accountId,toAccountId:type==='transfer'?toAccountId:null,categoryId:type==='transfer'?null:categoryId,description,owner,tag,notes,updatedAt:Date.now()});
     await saveState();
     closeModal('txModal');
@@ -140,9 +159,10 @@ async function saveTx(){
     const parentId=uid();
     const dates=generateInstallmentDates(first,count);
     const amounts=amortInstallmentAmounts(amount,rate,count);
+    const opStamp=isOperatorSession()?{createdByOperatorId:sessionOperatorId}:{};
     for(let i=0;i<count;i++){
       state.transactions.push({
-        id:uid(),type,date:dates[i],status,amount:amounts[i],currency,paymentMethod,accountId,toAccountId:null,categoryId,description:description||`תשלום ${i+1}/${count}`,owner,tag,notes:i===0?notes:'',installmentParentId:parentId,installmentNum:i+1,installmentTotal:count,interestRate:i===0?rate:0,principal:i===0?amount:undefined,createdAt:Date.now(),updatedAt:Date.now()
+        id:uid(),type,date:dates[i],status,amount:amounts[i],currency,paymentMethod,accountId,toAccountId:null,categoryId,description:description||`תשלום ${i+1}/${count}`,owner,tag,notes:i===0?notes:'',installmentParentId:parentId,installmentNum:i+1,installmentTotal:count,interestRate:i===0?rate:0,principal:i===0?amount:undefined,createdAt:Date.now(),updatedAt:Date.now(),...opStamp
       });
     }
     await saveState();
@@ -151,7 +171,9 @@ async function saveTx(){
     render();
     return;
   }
-  state.transactions.push({id:uid(),type,date,status,amount,currency,paymentMethod,accountId,toAccountId:type==='transfer'?toAccountId:null,categoryId:type==='transfer'?null:categoryId,description,owner,tag,notes,createdAt:Date.now(),updatedAt:Date.now()});
+  const newTx={id:uid(),type,date,status,amount,currency,paymentMethod,accountId,toAccountId:type==='transfer'?toAccountId:null,categoryId:type==='transfer'?null:categoryId,description,owner,tag,notes,createdAt:Date.now(),updatedAt:Date.now()};
+  if(isOperatorSession())newTx.createdByOperatorId=sessionOperatorId;
+  state.transactions.push(newTx);
   await saveState();
   closeModal('txModal');
   toast('נשמר','success');
@@ -163,6 +185,10 @@ async function deleteTx(){
   if(!id)return;
   const tx=state.transactions.find(t=>t.id===id);
   if(!tx)return;
+  if(isOperatorSession()){
+    if(tx.installmentParentId){toast('לא ניתן למחוק תוכנית תשלומים במצב מפעיל','error');return}
+    if(tx.createdByOperatorId!==sessionOperatorId){toast('אין הרשאה למחיקה','error');return}
+  }
   if(tx.installmentParentId){
     if(!confirm('למחוק את כל תשלומי התוכנית?'))return;
     const pid=tx.installmentParentId;
@@ -184,6 +210,7 @@ async function deleteTx(){
 async function confirmTx(id){
   const tx=state.transactions.find(t=>t.id===id);
   if(!tx)return;
+  if(isOperatorSession()&&tx.createdByOperatorId!==sessionOperatorId){toast('אין הרשאה','error');return}
   tx.status='completed';
   tx.updatedAt=Date.now();
   await saveState();
@@ -192,6 +219,7 @@ async function confirmTx(id){
 }
 
 function openRecurringModal(id){
+  if(isOperatorSession()){toast('במצב מפעיל אין גישה לקבועים','error');return}
   refreshAllFormSelectLabels();
   document.getElementById('recurringModalTitle').textContent=id?'עריכת קבוע':'הכנסה/הוצאה קבועה';
   document.getElementById('recurringDeleteBtn').style.display=id?'inline-flex':'none';
@@ -267,6 +295,7 @@ async function deleteRecurring(){
 }
 
 function openCheckModal(id){
+  if(isOperatorSession()){toast('במצב מפעיל אין גישה לצ׳קים','error');return}
   refreshAllFormSelectLabels();
   document.getElementById('checkModalTitle').textContent=id?'עריכת צ׳ק':'צ׳ק חדש';
   document.getElementById('checkDeleteBtn').style.display=id?'inline-flex':'none';
@@ -540,6 +569,7 @@ function addSubtaskField(){
 }
 
 function openTaskModal(id){
+  if(isOperatorSession()){toast('במצב מפעיל אין גישה למשימות','error');return}
   refreshAllFormSelectLabels();
   document.getElementById('taskModalTitle').textContent=id?'עריכת משימה':'משימה חדשה';
   document.getElementById('taskDeleteBtn').style.display=id?'inline-flex':'none';
@@ -633,6 +663,7 @@ function toggleEventTimeFields(){
 }
 
 function openEventModal(id){
+  if(isOperatorSession()){toast('במצב מפעיל אין גישה לאירועים','error');return}
   document.getElementById('eventModalTitle').textContent=id?'עריכת אירוע':'אירוע חדש';
   document.getElementById('eventDeleteBtn').style.display=id?'inline-flex':'none';
   document.getElementById('eventId').value=id||'';

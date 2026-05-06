@@ -3,15 +3,20 @@ function renderFuture(){
   const days=state.settings.futureWindowDays||30;
   const todayD=new Date();todayD.setHours(0,0,0,0);
   const futureD=new Date(todayD);futureD.setDate(futureD.getDate()+days);
-  const future=[...state.transactions].filter(t=>t.status==='pending').sort((a,b)=>new Date(a.date)-new Date(b.date));
-  const upcomingChecks=[...state.checks].filter(c=>c.status==='pending').sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));
+  const op=isOperatorSession();
+  let future=[...state.transactions].filter(t=>t.status==='pending');
+  if(op)future=future.filter(t=>t.createdByOperatorId===sessionOperatorId);
+  future.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const upcomingChecks=op?[]:[...state.checks].filter(c=>c.status==='pending').sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));
   const recurringOccs=[];
-  state.recurring.forEach(rec=>{
-    const isActive=rec.active===1||rec.active==='1'||rec.active===true;
-    if(!isActive)return;
-    const occs=generateRecurringOccurrences(rec,localISO(todayD),localISO(futureD));
-    occs.forEach(date=>{recurringOccs.push({recurring:true,recurringId:rec.id,date,type:rec.type,amount:rec.amount,currency:rec.currency,accountId:rec.accountId,name:rec.name})});
-  });
+  if(!op){
+    state.recurring.forEach(rec=>{
+      const isActive=rec.active===1||rec.active==='1'||rec.active===true;
+      if(!isActive)return;
+      const occs=generateRecurringOccurrences(rec,localISO(todayD),localISO(futureD));
+      occs.forEach(date=>{recurringOccs.push({recurring:true,recurringId:rec.id,date,type:rec.type,amount:rec.amount,currency:rec.currency,accountId:rec.accountId,name:rec.name})});
+    });
+  }
   recurringOccs.sort((a,b)=>a.date.localeCompare(b.date));
   let projIls=getTotalByCurrency('ILS'),projUsd=getTotalByCurrency('USD');
   future.forEach(t=>{if(new Date(t.date)>futureD)return;const a=+t.amount,s=t.type==='income'?1:t.type==='expense'?-1:0;if(t.currency==='ILS')projIls+=s*a;else if(t.currency==='USD')projUsd+=s*a});
@@ -21,7 +26,7 @@ function renderFuture(){
     <div class="page-header">
       <div>
         <h1 class="page-title">תזרים עתידי</h1>
-        <div class="page-sub">${days} ימים קדימה · ${future.length+upcomingChecks.length+recurringOccs.length} פריטים</div>
+        <div class="page-sub">${days} ימים קדימה · ${future.length+upcomingChecks.length+recurringOccs.length} פריטים${op?' · רק תנועות עתידיות שלך':''}</div>
       </div>
       <button class="btn btn-primary" onclick="openTxModal(null,{status:'pending'})">+ תנועה עתידית</button>
     </div>
@@ -46,6 +51,7 @@ function renderFuture(){
 }
 
 async function materializeRecurring(recurringId,date){
+  if(isOperatorSession()){toast('לא זמין במצב מפעיל','error');return}
   const rec=state.recurring.find(r=>r.id===recurringId);
   if(!rec)return;
   const tx={id:uid(),type:rec.type,date,amount:rec.amount,currency:rec.currency,accountId:rec.accountId,categoryId:rec.categoryId,description:rec.name,paymentMethod:'cash',owner:'me',status:'completed',tag:'fixed',notes:rec.notes||'',fromRecurringId:recurringId,createdAt:Date.now(),updatedAt:Date.now()};
@@ -372,7 +378,7 @@ function renderSettings(){
     </div>
     <div class="card">
       <div class="card-title">שמות</div>
-      <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;line-height:1.5">השם מופיע בברוכים הבאים. תנועות וצ׳קים — רק נתונים במכשיר; אין מצב «משתמש מתחלף».</p>
+      <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;line-height:1.5">השם מופיע בברוכים הבאים. ניתן להגדיר גם <strong>מפעילים מוגבלים</strong> (להלן) שרואים רק תנועות שהזינו — ללא בידוד קריפטוגרפי מול מי שמחזיק את סיסמת המנהל.</p>
       <div class="form-row">
         <div class="field"><label>השם שלך</label>
           <input type="text" id="settingsMyName" value="${escapeHtml(s.myName||'')}" placeholder="">
@@ -382,6 +388,17 @@ function renderSettings(){
         </div>
       </div>
       <button type="button" class="btn btn-primary" onclick="saveDisplayNames()">שמור שמות</button>
+    </div>
+    <div class="card">
+      <div class="card-title">מפעילים מוגבלים (תנועות והיסטוריה אישית)</div>
+      <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;line-height:1.65">לאחר שתפתחו את האפליקציה כמנהל, אפשר לעבור למצב מפעיל: הוא רואה רק את העמודים «תנועות» ו«תזרים עתידי», ורק תנועות (בוצע/צפוי) שהוא רשם. <strong>זו אכיפת ממשק בלבד</strong> — מי שיודע את סיסמת פתיחת האפליקציה או מחזיק את גיבוי/כספת המכשיר עדיין יכול לראות את כל הנתונים; סנכרון Supabase ממשיך לשכפל את כל הכספת המוצפנת.</p>
+      <div class="form-row" style="align-items:flex-end;flex-wrap:wrap">
+        <div class="field" style="flex:1;min-width:160px"><label>שם מפעיל חדש</label>
+          <input type="text" id="newLimitedOpLabel" placeholder="למשל: עוזר/ת">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="addLimitedOperator()">הוסף מפעיל</button>
+      </div>
+      ${(s.operators||[]).length===0?'<p style="font-size:12px;color:var(--ink-mute);margin-top:10px">עדיין אין מפעילים — הוסיפו שם ואז «כניסה כמפעיל» למסירת המכשיר.</p>':`<ul style="margin:12px 0 0;padding:0;list-style:none">${(s.operators||[]).map(o=>`<li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-soft);flex-wrap:wrap"><span style="font-weight:500">${escapeHtml(o.label||'')}</span><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-secondary btn-sm" onclick="enterOperatorMode('${o.id}')">כניסה כמפעיל</button><button type="button" class="btn btn-ghost btn-sm" onclick="deleteLimitedOperator('${o.id}')">מחק</button></div></li>`).join('')}</ul>`}
     </div>
     <div class="card">
       <div class="card-title">ניהול קטגוריות, חשבונות ותקציבים</div>
@@ -504,8 +521,30 @@ function renderSettings(){
     <div class="card">
       <div class="card-title">אודות ופרטיות</div>
       <p style="font-size:13px;color:var(--ink-soft);line-height:1.65">הנתונים נשמרים <strong>במכשיר</strong> (מוצפנים). אופציונלי: סנכרון דרך Supabase (למעלה) — בענן רק ciphertext. בלי זה: «גיבוי בין מכשירים» — ייצוא קובץ ושליחה בערוץ שבוחרים, ואז ייבוא במכשיר השני.</p>
+      <p style="font-size:13px;color:var(--ink-soft);line-height:1.65;margin-top:10px"><strong>מפעיל מוגבל:</strong> ההגבלה היא במסך ובקוד האפליקציה בלבד. מנהל עם סיסמת פתיחה או קובץ גיבוי מלא עדיין נחשף לכל התוכן; מכשיר מנהל שמסנכרן מהענן ממשיך לקבל את כל הכספת.</p>
     </div>
   `;
+}
+
+async function addLimitedOperator(){
+  if(!state)return;
+  const inp=document.getElementById('newLimitedOpLabel');
+  const label=(inp&&inp.value||'').trim();
+  if(!label){toast('הזן שם למפעיל','error');return}
+  if(!state.settings.operators)state.settings.operators=[];
+  state.settings.operators.push({id:uid(),label,active:true});
+  if(inp)inp.value='';
+  await saveState();
+  toast('נוסף מפעיל','success');
+  render();
+}
+
+async function deleteLimitedOperator(id){
+  if(!state||!id||!confirm('למחוק מפעיל מהרשימה?'))return;
+  state.settings.operators=(state.settings.operators||[]).filter(o=>o.id!==id);
+  await saveState();
+  toast('נמחק','success');
+  render();
 }
 
 async function saveDisplayNames(){

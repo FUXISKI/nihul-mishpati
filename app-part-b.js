@@ -215,6 +215,7 @@ async function completeSetup(){
 function lockNow(){
   masterPassword=null;
   state=null;
+  clearOperatorSession();
   try{sessionStorage.removeItem(SESSION_PWD_KEY)}catch(err){}
   const lm=getMeta();
   delete lm.quickUntil;
@@ -233,6 +234,12 @@ function lockNow(){
 function handleUrlAction(){
   const params=new URLSearchParams(window.location.search);
   const action=params.get('action');
+  if(isOperatorSession()&&action&&action!=='new_tx'&&action!=='new_income'){
+    if(action==='new_task')toast('במצב מפעיל אין גישה למשימות','error');
+    else toast('פעולה לא זמינה במצב מפעיל','error');
+    if(action)history.replaceState({},'',location.pathname);
+    return;
+  }
   if(action==='new_tx')setTimeout(()=>openTxModal(null,{type:'expense'}),300);
   else if(action==='new_income')setTimeout(()=>openTxModal(null,{type:'income'}),300);
   else if(action==='new_task')setTimeout(()=>openTaskModal(),300);
@@ -245,6 +252,10 @@ function toggleSidebar(){
 }
 
 function navigate(page){
+  if(isOperatorSession()&&!operatorAllowedPages().includes(page)){
+    toast('במצב מפעיל אין גישה לעמוד זה','error');
+    page='transactions';
+  }
   currentPage=page;
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
   if(window.innerWidth<=768){
@@ -261,6 +272,7 @@ function pageTitle(p){
 
 function render(){
   if(!state)return;
+  if(isOperatorSession()&&!operatorAllowedPages().includes(currentPage))currentPage='transactions';
   document.getElementById('mobileTitle').textContent=pageTitle(currentPage);
   const main=document.getElementById('main');
   switch(currentPage){
@@ -278,6 +290,66 @@ function render(){
     case'settings':main.innerHTML=renderSettings();break;
   }
   if(state&&typeof refreshAllFormSelectLabels==='function')try{refreshAllFormSelectLabels()}catch(err){}
+  applyOperatorNavChrome();
+}
+
+function applyOperatorNavChrome(){
+  const op=isOperatorSession();
+  const bar=document.getElementById('operatorModeBar');
+  const labelEl=document.getElementById('operatorModeLabel');
+  if(bar&&labelEl){
+    if(op){
+      const rec=operatorsList().find(o=>o.id===sessionOperatorId);
+      labelEl.textContent=rec&&rec.label?'מצב מפעיל מוגבל: '+rec.label:'מצב מפעיל מוגבל';
+      bar.style.display='flex';
+    }else{
+      bar.style.display='none';
+    }
+  }
+  const allowed=operatorAllowedPages();
+  document.querySelectorAll('.nav-section-title').forEach(el=>{el.style.display=op?'none':''});
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    const p=el.dataset.page;
+    el.style.display=!op||allowed.includes(p)?'':'none';
+  });
+  const fabItems=document.querySelectorAll('#fabMenu .fab-menu-item');
+  fabItems.forEach((btn,i)=>{if(op&&i>=2)btn.style.display='none';else btn.style.display=''});
+  const syncBtns=document.querySelectorAll('.sync-btn');
+  if(syncBtns[0])syncBtns[0].style.display=op?'none':'';
+}
+
+async function enterOperatorMode(operatorId){
+  if(!state||!masterPassword){toast('פתחו קודם את האפליקציה כמנהל','error');return}
+  const ops=operatorsList();
+  const op=ops.find(o=>o.id===operatorId&&o.active!==false);
+  if(!op){toast('מפעיל לא נמצא','error');return}
+  sessionRole='operator';
+  sessionOperatorId=operatorId;
+  if(typeof txFilter!=='undefined'){
+    txFilter.operatorTxStatus='all';
+    txFilter.type='all';
+    txFilter.account='all';
+    txFilter.tag='all';
+    txFilter.paymentMethod='all';
+    txFilter.from=null;
+    txFilter.to=null;
+    txFilter.search='';
+  }
+  navigate('transactions');
+  toast('נכנסתם כמפעיל מוגבל','success');
+}
+
+async function exitOperatorMode(){
+  const p=window.prompt('הזינו סיסמת מנהל (פתיחת האפליקציה) כדי לחזור למצב מלא:');
+  if(p==null)return;
+  const meta=getMeta();
+  if(!meta.passwordHash){clearOperatorSession();navigate('dashboard');toast('חזרתם למצב מנהל','success');return}
+  let ok=false;
+  try{ok=await Crypto.verifyPassword(p,meta.passwordHash)}catch(e){ok=false}
+  if(!ok){toast('סיסמה שגויה','error');return}
+  clearOperatorSession();
+  navigate('dashboard');
+  toast('חזרתם למצב מנהל','success');
 }
 
 function toggleFabMenu(){document.getElementById('fabMenu').classList.toggle('open')}

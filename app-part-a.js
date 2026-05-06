@@ -2,6 +2,8 @@ const STORAGE_KEY='familyMgr_v2';
 const META_KEY='familyMgr_meta_v2';
 let masterPassword=null;
 let state=null;
+let sessionRole='admin';
+let sessionOperatorId=null;
 let currentPage='dashboard';
 let calendarMonth=new Date().getMonth();
 let calendarYear=new Date().getFullYear();
@@ -42,7 +44,8 @@ function defaultState(){
       supabaseAnonKey:'',
       supabaseAuthEmail:'',
       backupReminderDays:14,
-      showInDashboard:{stats:true,recentTx:true,upcoming:true,tasks:true,events:true,alerts:true,accountCards:true,budgets:false,backupReminder:true}
+      showInDashboard:{stats:true,recentTx:true,upcoming:true,tasks:true,events:true,alerts:true,accountCards:true,budgets:false,backupReminder:true},
+      operators:[]
     },
     deviceId:'dev_'+Math.random().toString(36).substring(2,10)
   };
@@ -76,7 +79,8 @@ async function loadState(password){
     defaultWhatsAppPhone:typeof ds.defaultWhatsAppPhone==='string'?ds.defaultWhatsAppPhone:'',
     supabaseUrl:typeof ds.supabaseUrl==='string'?ds.supabaseUrl:(typeof ds.cloudVaultUrl==='string'&&/supabase\.co/i.test(ds.cloudVaultUrl)?ds.cloudVaultUrl:''),
     supabaseAnonKey:typeof ds.supabaseAnonKey==='string'?ds.supabaseAnonKey:'',
-    supabaseAuthEmail:typeof ds.supabaseAuthEmail==='string'?ds.supabaseAuthEmail:(typeof ds.cloudVaultEmail==='string'?ds.cloudVaultEmail:'')
+    supabaseAuthEmail:typeof ds.supabaseAuthEmail==='string'?ds.supabaseAuthEmail:(typeof ds.cloudVaultEmail==='string'?ds.cloudVaultEmail:''),
+    operators:Array.isArray(ds.operators)?ds.operators:[]
   })});
   embeddedSupabaseDefaults(out.settings);
   return out;
@@ -124,6 +128,14 @@ function uiLabel(section,key){
 function getMeta(){try{return JSON.parse(localStorage.getItem(META_KEY)||'{}')}catch(e){return{}}}
 function setMeta(m){localStorage.setItem(META_KEY,JSON.stringify(m))}
 function uid(){return'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).substring(2,8)}
+
+function isOperatorSession(){return sessionRole==='operator'&&!!sessionOperatorId}
+function clearOperatorSession(){sessionRole='admin';sessionOperatorId=null}
+function operatorsList(){
+  if(!state||!state.settings)return[];
+  return Array.isArray(state.settings.operators)?state.settings.operators:[];
+}
+function operatorAllowedPages(){return['transactions','future']}
 
 function fmtMoney(amount,currency){
   const sym=currency==='USD'?'$':'₪';
