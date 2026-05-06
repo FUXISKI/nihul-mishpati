@@ -97,7 +97,9 @@ async function teamSyncPullFull(){
   }
 }
 
-async function teamSyncPushFull(){
+async function teamSyncPushFull(opts){
+  opts = opts || {};
+  const silent = !!opts.silent;
   if (!teamSyncActive() || !masterPassword){ toast('סנכרון צוות דורש פתיחת אפליקציה והתחברות לסופבייס', 'error'); return false; }
   const sb = getCloudSupabase();
   const wid = getTeamWorkspaceId();
@@ -132,7 +134,7 @@ async function teamSyncPushFull(){
         return false;
       }
     }
-    toast('סנכרון צוות הועלה (' + rows.length + ' מסמכים)', 'success');
+    if (!silent) toast('סנכרון צוות הועלה (' + rows.length + ' מסמכים)', 'success');
     return true;
   }catch(e){
     console.error(e);
@@ -200,9 +202,9 @@ async function teamEnsureWorkspace(){
     }
     setTeamWorkspaceId(wid);
     await saveState();
-    await teamSyncPushFull();
+    const ok = await teamSyncPushFull({ silent: true });
     teamSyncStartRealtime();
-    toast('סנכרון צוות הופעל', 'success');
+    if (ok) toast('סנכרון צוות פעיל — הנתונים הועלו', 'success');
     if (typeof render === 'function') render();
   }catch(e){
     console.error(e);

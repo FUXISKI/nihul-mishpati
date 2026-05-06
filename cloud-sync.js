@@ -85,9 +85,22 @@ function cloudVaultAuthed(){
 
 async function cloudVaultSaveUrls(){
   if (!state) return;
-  state.settings.supabaseUrl = (document.getElementById('settingSupabaseUrl').value || '').trim().replace(/\/$/, '');
-  state.settings.supabaseAnonKey = (document.getElementById('settingSupabaseAnonKey').value || '').trim();
-  state.settings.supabaseAuthEmail = (document.getElementById('settingSupabaseAuthEmail').value || '').trim().toLowerCase();
+  embeddedSupabaseDefaults(state.settings);
+  const uEl=document.getElementById('settingSupabaseUrl');
+  const kEl=document.getElementById('settingSupabaseAnonKey');
+  const eEl=document.getElementById('settingSupabaseAuthEmail');
+  if(uEl){
+    const v=(uEl.value||'').trim().replace(/\/$/,'');
+    if(v)state.settings.supabaseUrl=v;
+  }
+  if(kEl){
+    const v=(kEl.value||'').trim();
+    if(v)state.settings.supabaseAnonKey=v;
+  }
+  if(eEl){
+    const v=(eEl.value||'').trim().toLowerCase();
+    if(v)state.settings.supabaseAuthEmail=v;
+  }
   resetCloudSupabaseClient();
   const mm = getMeta();
   mm.supabaseHasSession = false;

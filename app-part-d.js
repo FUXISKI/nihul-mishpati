@@ -348,7 +348,9 @@ async function saveReopenSettings(){
 }
 
 function renderSettings(){
+  embeddedSupabaseDefaults(state.settings);
   const s=state.settings;
+  const emb=nihulHasEmbeddedSupabaseConfig();
   const sh=s.showInDashboard||{};
   const meta=getMeta();
   const reopenMode=meta.reopenMode||'always';
@@ -490,52 +492,55 @@ function renderSettings(){
       </div>
     </div>
     <div class="card">
-      <div class="card-title">סנכרון ענן (E2E) עם Supabase</div>
-      <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;line-height:1.65">בסופבייס נשמרת רק <strong>מחרוזת מוצפנת</strong> — לא סיסמת האפליקציה ולא תוכן קריא. <strong>מפתח anon</strong> מופיע בלוח Supabase (API) והוא מיועד להיות בדפדפן; הגנה אמיתית באמצעות הרשאות RLS בשרת. סיסמת השדה למטה היא <em>לחשבון Supabase Auth</em> (לפחות 6 תווים), נפרדת מסיסמת פתיחת האפליקציה. מדריך פריסה מלא בקובץ <code style="font-size:11px">מדריך-פריסה-סופבייס-ורסל.txt</code>.</p>
-      <p style="font-size:12px;color:var(--ink-mute);margin-bottom:12px">סטטוס סופבייס: <strong id="cloudVaultStatus">${cloudVaultAuthed()?'מחובר':'לא מחובר'}</strong></p>
+      <div class="card-title">ענן, צוות וגיבוי</div>
+      <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;line-height:1.65">ממלאים <strong>אימייל וסיסמה של חשבון Supabase Auth</strong> (לפחות 6 תווים לסיסמה) — נפרד מסיסמת פתיחת האפליקציה. אחרי <strong>התחברות</strong> הנתונים מסתנכרנים לענן (טבלאות + הרשאות). גיבוי הכספת המוצפנת הישנה עדיין זמין למטה.</p>
+      ${emb?`<p style="font-size:12px;color:var(--green);margin-bottom:12px;line-height:1.5;font-weight:600">כתובת הפרויקט והמפתח הציבורי מוטמעים באתר — לא צריך להעתיק אותם מהלוח של Supabase.</p>`:''}
+      <p style="font-size:12px;color:var(--ink-mute);margin-bottom:12px;line-height:1.55">סטטוס: <strong id="cloudVaultStatus">${cloudVaultAuthed()?'מחובר לסופבייס':'לא מחובר'}</strong>
+        · צוות: ${s.teamWorkspaceId?`<strong dir="ltr" style="word-break:break-all">${escapeHtml(s.teamWorkspaceId)}</strong>`:'<span style="color:var(--ink-soft)">לא מקושר — בעלים: «התחל סנכרון צוות»</span>'}</p>
       <div class="form-row">
-        <div class="field" style="grid-column:1/-1"><label>כתובת Supabase (Project URL)</label>
+        ${emb?'':`<div class="field" style="grid-column:1/-1"><label>כתובת Supabase (Project URL)</label>
           <input type="url" id="settingSupabaseUrl" dir="ltr" style="text-align:left" class="lock-input-text" value="${escapeHtml(s.supabaseUrl||'')}" placeholder="https://xxxx.supabase.co">
         </div>
-        <div class="field" style="grid-column:1/-1"><label>מפתח anon (public) — מ-Project Settings → API</label>
-          <input type="text" id="settingSupabaseAnonKey" dir="ltr" style="text-align:left" class="lock-input-text" autocomplete="off" value="${escapeHtml(s.supabaseAnonKey||'')}" placeholder="eyJhbGciOiJIUzI1NiIs...">
-        </div>
-        <div class="field"><label>אימייל (משתמש ב-Supabase Auth)</label>
+        <div class="field" style="grid-column:1/-1"><label>מפתח anon (public)</label>
+          <input type="text" id="settingSupabaseAnonKey" dir="ltr" style="text-align:left" class="lock-input-text" autocomplete="off" value="${escapeHtml(s.supabaseAnonKey||'')}" placeholder="eyJ...">
+        </div>`}
+        <div class="field"><label>אימייל (Supabase Auth)</label>
           <input type="email" id="settingSupabaseAuthEmail" dir="ltr" style="text-align:left" autocomplete="username" value="${escapeHtml(s.supabaseAuthEmail||'')}" placeholder="you@example.com">
         </div>
         <div class="field"><label>סיסמה ל-Supabase (לא נשמרת באפליקציה)</label>
-          <input type="password" id="settingCloudVaultPass" dir="ltr" style="text-align:left" autocomplete="current-password" placeholder="לרישום / התחברות">
+          <input type="password" id="settingCloudVaultPass" dir="ltr" style="text-align:left" autocomplete="current-password" placeholder="לפחות 6 תווים">
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-        <button type="button" class="btn btn-secondary" onclick="cloudVaultSaveUrls()">שמור חיבור לסופבייס</button>
-        <button type="button" class="btn btn-secondary" onclick="cloudVaultRegister()">הרשמה בסופבייס</button>
-        <button type="button" class="btn btn-primary" onclick="cloudVaultLogin()">התחברות לסופבייס</button>
+        <button type="button" class="btn btn-secondary" onclick="cloudVaultSaveUrls()">${emb?'החל חיבור מהאתר':'שמור כתובת ומפתח'}</button>
+        <button type="button" class="btn btn-secondary" onclick="cloudVaultRegister()">הרשמה</button>
+        <button type="button" class="btn btn-primary" onclick="cloudVaultLogin()">התחברות</button>
         <button type="button" class="btn btn-secondary" onclick="cloudVaultLogout()" ${cloudVaultAuthed()?'':'disabled'}>ניתוק</button>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button type="button" class="btn btn-primary" onclick="cloudVaultPush()">דחיפה לענן (מוצפן)</button>
-        <button type="button" class="btn btn-secondary" onclick="cloudVaultPull()">משיכה מהענן</button>
+      <div style="font-size:11px;font-weight:600;color:var(--ink-soft);margin:12px 0 8px">גיבוי כספת מוצפנת (אופציונלי)</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <button type="button" class="btn btn-primary" onclick="cloudVaultPush()">דחיפה מוצפנת</button>
+        <button type="button" class="btn btn-secondary" onclick="cloudVaultPull()">משיכה מוצפנת</button>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-title">סנכרון צוות (טבלאות + RLS + מיידי)</div>
-      <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;line-height:1.65">לאחר <strong>הרצת SQL</strong> של <code style="font-size:11px">supabase/team_workspace.sql</code> בפרויקט הסופבייס, והפעלת <strong>Realtime</strong> על טבלת <code style="font-size:11px">fm_documents</code> (בלוח Database), הנתונים נשמרים כשורות נפרדות לפי workspace — כל משתמש Auth רואה רק workspaces שהוא חבר בהם. שינויים נדחפים אוטומטית אחרי שמירה מקומית (עיכוב קצר) ומתעדכנים אצל האחרים דרך Realtime.</p>
-      <p style="font-size:12px;color:var(--ink-mute);margin-bottom:12px">מזהה workspace במכשיר זה: <strong dir="ltr" style="word-break:break-all">${escapeHtml(s.teamWorkspaceId||'—')}</strong></p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-        <button type="button" class="btn btn-primary" onclick="teamEnsureWorkspace()">צור / קשר workspace (בעלים)</button>
-        <button type="button" class="btn btn-secondary" onclick="teamShowInviteToken()">הצג קוד הזמנה (UUID)</button>
-        <button type="button" class="btn btn-secondary" onclick="teamSyncPushFull()">דחף הכל לענן עכשיו</button>
-        <button type="button" class="btn btn-secondary" onclick="teamSyncPullFull().then(function(){render()})">משוך מהענן עכשיו</button>
-        <button type="button" class="btn btn-ghost" onclick="teamClearWorkspaceLocal()">נתק workspace במכשיר</button>
-      </div>
-      <div class="form-row" style="align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
-        <div class="field" style="flex:1;min-width:200px"><label>הצטרפות עם קוד הזמנה</label>
-          <input type="text" id="teamJoinTokenInput" dir="ltr" class="lock-input-text" placeholder="uuid" autocomplete="off">
+      <div style="border-top:1px solid var(--line-soft);padding-top:14px;margin-top:4px">
+        <div style="font-size:11px;font-weight:600;color:var(--ink-soft);margin-bottom:8px">צוות (עדכונים מיידיים בין מכשירים)</div>
+        <p style="font-size:11px;color:var(--ink-mute);margin-bottom:10px;line-height:1.5"><strong>בעלים (מכשיר ראשון):</strong> אחרי התחברות לסופבייס לוחצים פעם אחת «התחל סנכרון צוות». <strong>מוזמן:</strong> אחרי התחברות מדביקים את קוד ההזמנה למטה, «הצטרף», ואז «משוך מהענן».</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <button type="button" class="btn btn-primary" onclick="teamEnsureWorkspace()">התחל סנכרון צוות (בעלים)</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="teamShowInviteToken()">הצג קוד הזמנה</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="teamSyncPushFull()">דחף הכל עכשיו</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="teamSyncPullFull().then(function(){render()})">משוך מהענן עכשיו</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="teamClearWorkspaceLocal()">נתק צוות במכשיר</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="teamEnsureWorkspace()">תיקון: קשר מחדש</button>
         </div>
-        <button type="button" class="btn btn-primary" onclick="teamJoinByToken(document.getElementById('teamJoinTokenInput').value)">הצטרף</button>
+        <div class="form-row" style="align-items:flex-end;flex-wrap:wrap;margin-bottom:0">
+          <div class="field" style="flex:1;min-width:200px"><label>הצטרפות עם קוד הזמנה</label>
+            <input type="text" id="teamJoinTokenInput" dir="ltr" class="lock-input-text" placeholder="uuid" autocomplete="off">
+          </div>
+          <button type="button" class="btn btn-primary" onclick="teamJoinByToken(document.getElementById('teamJoinTokenInput').value)">הצטרף</button>
+        </div>
+        <p style="font-size:10px;color:var(--ink-mute);margin-top:10px;line-height:1.45"><strong>מפעיל מוגבל בענן:</strong> ב-Supabase בטבלת workspace_members משתמש עם role־operator ו־operator_scope_id זהה למזהה המפעיל בהגדרות האפליקציה.</p>
       </div>
-      <p style="font-size:11px;color:var(--ink-mute);line-height:1.5"><strong>מפעיל מוגבל בענן:</strong> הוסיפו ב-Supabase טבלת <code style="font-size:10px">workspace_members</code> משתמש עם <code style="font-size:10px">role=operator</code> ו־<code style="font-size:10px">operator_scope_id</code> זהה למזהה המפעיל ברשימת «מפעילים מוגבלים» באפליקציה. תפקיד operator רואה רק תנועות עם אותו <code style="font-size:10px">createdByOperatorId</code>, וקריאה ל־accounts/categories בלבד.</p>
     </div>
     <div class="card">
       <div class="card-title">אודות ופרטיות</div>

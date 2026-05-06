@@ -283,6 +283,7 @@ function pageTitle(p){
 
 function render(){
   if(!state)return;
+  embeddedSupabaseDefaults(state.settings);
   if(isOperatorSession()&&!operatorAllowedPages().includes(currentPage))currentPage='transactions';
   document.getElementById('mobileTitle').textContent=pageTitle(currentPage);
   const main=document.getElementById('main');

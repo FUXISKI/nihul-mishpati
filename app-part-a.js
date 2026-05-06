@@ -13,6 +13,14 @@ let pendingImportEncrypted=null;
 let pendingReplaceEncrypted=null;
 let mergeDecisions={};
 
+function nihulHasEmbeddedSupabaseConfig(){
+  const b=typeof window!=='undefined'&&window.__NIHUL_BUILD__;
+  if(!b||typeof b!=='object')return false;
+  const url=typeof b.supabaseUrl==='string'?b.supabaseUrl.trim():'';
+  const anon=typeof b.supabaseAnonKey==='string'?b.supabaseAnonKey.trim():'';
+  return !!(url&&anon);
+}
+
 function embeddedSupabaseDefaults(intoSettings){
   if(!intoSettings||typeof intoSettings!=='object')return;
   const b=typeof window!=='undefined'&&window.__NIHUL_BUILD__;
@@ -20,9 +28,16 @@ function embeddedSupabaseDefaults(intoSettings){
   const url=typeof b.supabaseUrl==='string'?b.supabaseUrl.trim().replace(/\/$/,''):'';
   const anon=typeof b.supabaseAnonKey==='string'?b.supabaseAnonKey.trim():'';
   const email=typeof b.supabaseAuthEmail==='string'?b.supabaseAuthEmail.trim().toLowerCase():'';
-  if(url&&!intoSettings.supabaseUrl)intoSettings.supabaseUrl=url;
-  if(anon&&!intoSettings.supabaseAnonKey)intoSettings.supabaseAnonKey=anon;
-  if(email&&!intoSettings.supabaseAuthEmail)intoSettings.supabaseAuthEmail=email;
+  const force=nihulHasEmbeddedSupabaseConfig();
+  if(force){
+    if(url)intoSettings.supabaseUrl=url;
+    if(anon)intoSettings.supabaseAnonKey=anon;
+    if(email)intoSettings.supabaseAuthEmail=email;
+  }else{
+    if(url&&!intoSettings.supabaseUrl)intoSettings.supabaseUrl=url;
+    if(anon&&!intoSettings.supabaseAnonKey)intoSettings.supabaseAnonKey=anon;
+    if(email&&!intoSettings.supabaseAuthEmail)intoSettings.supabaseAuthEmail=email;
+  }
 }
 
 function defaultState(){

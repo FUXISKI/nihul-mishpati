@@ -271,6 +271,11 @@ $$;
 REVOKE ALL ON FUNCTION public.join_workspace_by_token(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.join_workspace_by_token(uuid) TO authenticated;
 
--- Realtime: בלוח Supabase → Database → Publications / Realtime — הוסיפו את הטבלה fm_documents
--- או הריצו פעם אחת (אם אין שגיאת «already added»):
--- ALTER PUBLICATION supabase_realtime ADD TABLE public.fm_documents;
+-- Realtime (ניסיון אוטומטי; אם הטבלה כבר בפרסום — תופיע הודעת NOTICE בלבד)
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.fm_documents;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE NOTICE 'supabase_realtime fm_documents: %', SQLERRM;
+END $$;
