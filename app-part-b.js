@@ -74,7 +74,12 @@ async function attemptAutoUnlock(){
     document.getElementById('mainApp').style.display='flex';
     render();
     if(typeof cloudSyncRefreshSessionMeta==='function'){
-      cloudSyncRefreshSessionMeta().then(function(){render()}).catch(function(){});
+      cloudSyncRefreshSessionMeta().then(async function(){
+        if(typeof teamInitAfterUnlock==='function'){try{await teamInitAfterUnlock()}catch(e){console.error(e)}}
+        render();
+      }).catch(function(){render()});
+    }else if(typeof teamInitAfterUnlock==='function'){
+      teamInitAfterUnlock().then(function(){render()}).catch(function(){render()});
     }
     handleUrlAction();
     resetInactivityTimer();
@@ -112,7 +117,12 @@ async function tryUnlock(){
     document.getElementById('mainApp').style.display='flex';
     render();
     if(typeof cloudSyncRefreshSessionMeta==='function'){
-      cloudSyncRefreshSessionMeta().then(function(){render()}).catch(function(){});
+      cloudSyncRefreshSessionMeta().then(async function(){
+        if(typeof teamInitAfterUnlock==='function'){try{await teamInitAfterUnlock()}catch(e){console.error(e)}}
+        render();
+      }).catch(function(){render()});
+    }else if(typeof teamInitAfterUnlock==='function'){
+      teamInitAfterUnlock().then(function(){render()}).catch(function(){render()});
     }
     handleUrlAction();
     resetInactivityTimer();
@@ -213,6 +223,7 @@ async function completeSetup(){
 }
 
 function lockNow(){
+  if(typeof teamSyncStopRealtime==='function')try{teamSyncStopRealtime()}catch(e){}
   masterPassword=null;
   state=null;
   clearOperatorSession();

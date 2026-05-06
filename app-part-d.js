@@ -519,6 +519,25 @@ function renderSettings(){
       </div>
     </div>
     <div class="card">
+      <div class="card-title">סנכרון צוות (טבלאות + RLS + מיידי)</div>
+      <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;line-height:1.65">לאחר <strong>הרצת SQL</strong> של <code style="font-size:11px">supabase/team_workspace.sql</code> בפרויקט הסופבייס, והפעלת <strong>Realtime</strong> על טבלת <code style="font-size:11px">fm_documents</code> (בלוח Database), הנתונים נשמרים כשורות נפרדות לפי workspace — כל משתמש Auth רואה רק workspaces שהוא חבר בהם. שינויים נדחפים אוטומטית אחרי שמירה מקומית (עיכוב קצר) ומתעדכנים אצל האחרים דרך Realtime.</p>
+      <p style="font-size:12px;color:var(--ink-mute);margin-bottom:12px">מזהה workspace במכשיר זה: <strong dir="ltr" style="word-break:break-all">${escapeHtml(s.teamWorkspaceId||'—')}</strong></p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button type="button" class="btn btn-primary" onclick="teamEnsureWorkspace()">צור / קשר workspace (בעלים)</button>
+        <button type="button" class="btn btn-secondary" onclick="teamShowInviteToken()">הצג קוד הזמנה (UUID)</button>
+        <button type="button" class="btn btn-secondary" onclick="teamSyncPushFull()">דחף הכל לענן עכשיו</button>
+        <button type="button" class="btn btn-secondary" onclick="teamSyncPullFull().then(function(){render()})">משוך מהענן עכשיו</button>
+        <button type="button" class="btn btn-ghost" onclick="teamClearWorkspaceLocal()">נתק workspace במכשיר</button>
+      </div>
+      <div class="form-row" style="align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
+        <div class="field" style="flex:1;min-width:200px"><label>הצטרפות עם קוד הזמנה</label>
+          <input type="text" id="teamJoinTokenInput" dir="ltr" class="lock-input-text" placeholder="uuid" autocomplete="off">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="teamJoinByToken(document.getElementById('teamJoinTokenInput').value)">הצטרף</button>
+      </div>
+      <p style="font-size:11px;color:var(--ink-mute);line-height:1.5"><strong>מפעיל מוגבל בענן:</strong> הוסיפו ב-Supabase טבלת <code style="font-size:10px">workspace_members</code> משתמש עם <code style="font-size:10px">role=operator</code> ו־<code style="font-size:10px">operator_scope_id</code> זהה למזהה המפעיל ברשימת «מפעילים מוגבלים» באפליקציה. תפקיד operator רואה רק תנועות עם אותו <code style="font-size:10px">createdByOperatorId</code>, וקריאה ל־accounts/categories בלבד.</p>
+    </div>
+    <div class="card">
       <div class="card-title">אודות ופרטיות</div>
       <p style="font-size:13px;color:var(--ink-soft);line-height:1.65">הנתונים נשמרים <strong>במכשיר</strong> (מוצפנים). אופציונלי: סנכרון דרך Supabase (למעלה) — בענן רק ciphertext. בלי זה: «גיבוי בין מכשירים» — ייצוא קובץ ושליחה בערוץ שבוחרים, ואז ייבוא במכשיר השני.</p>
       <p style="font-size:13px;color:var(--ink-soft);line-height:1.65;margin-top:10px"><strong>מפעיל מוגבל:</strong> ההגבלה היא במסך ובקוד האפליקציה בלבד. מנהל עם סיסמת פתיחה או קובץ גיבוי מלא עדיין נחשף לכל התוכן; מכשיר מנהל שמסנכרן מהענן ממשיך לקבל את כל הכספת.</p>

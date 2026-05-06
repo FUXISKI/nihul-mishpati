@@ -32,6 +32,7 @@ const jsFiles = [
   'app-part-d.js',
   'app-part-e.js',
   'cloud-sync.js',
+  'team-sync.js',
 ];
 const js = jsFiles.map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
 
@@ -48,7 +49,8 @@ const scriptRe = new RegExp(
     String.raw`<script src="app-part-c.js"></script>\s*` +
     String.raw`<script src="app-part-d.js"></script>\s*` +
     String.raw`<script src="app-part-e.js"></script>\s*` +
-    String.raw`<script src="cloud-sync.js"></script>`,
+    String.raw`<script src="cloud-sync.js"></script>\s*` +
+    String.raw`<script src="team-sync.js"></script>`,
   'm'
 );
 

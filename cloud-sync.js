@@ -122,6 +122,7 @@ async function cloudVaultRegister(){
       setMeta(m);
       await saveState();
       toast('נרשמתם ומחוברים', 'success');
+      if (typeof teamInitAfterUnlock === 'function') { try { await teamInitAfterUnlock(); } catch (e) { console.error(e); } }
       render();
       return;
     }
@@ -136,6 +137,7 @@ async function cloudVaultRegister(){
     setMeta(m);
     await saveState();
     toast('מחוברים', 'success');
+    if (typeof teamInitAfterUnlock === 'function') { try { await teamInitAfterUnlock(); } catch (e) { console.error(e); } }
     render();
   } catch (e) {
     console.error(e);
@@ -167,6 +169,7 @@ async function cloudVaultLogin(){
     setMeta(m);
     await saveState();
     toast('מחוברים לסופבייס', 'success');
+    if (typeof teamInitAfterUnlock === 'function') { try { await teamInitAfterUnlock(); } catch (e) { console.error(e); } }
     render();
   } catch (e) {
     console.error(e);
@@ -175,6 +178,7 @@ async function cloudVaultLogin(){
 }
 
 async function cloudVaultLogout(){
+  if (typeof teamSyncStopRealtime === 'function') try { teamSyncStopRealtime(); } catch (e) {}
   const sb = getCloudSupabase();
   if (sb) {
     try { await sb.auth.signOut(); } catch (e) { console.error(e); }

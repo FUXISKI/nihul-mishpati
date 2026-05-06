@@ -45,7 +45,8 @@ function defaultState(){
       supabaseAuthEmail:'',
       backupReminderDays:14,
       showInDashboard:{stats:true,recentTx:true,upcoming:true,tasks:true,events:true,alerts:true,accountCards:true,budgets:false,backupReminder:true},
-      operators:[]
+      operators:[],
+      teamWorkspaceId:null
     },
     deviceId:'dev_'+Math.random().toString(36).substring(2,10)
   };
@@ -59,6 +60,7 @@ async function saveState(){
     const json=JSON.stringify(state);
     const enc=await Crypto.encrypt(json,masterPassword);
     localStorage.setItem(STORAGE_KEY,enc);
+    if(typeof scheduleTeamSyncFlush==='function')scheduleTeamSyncFlush();
   }catch(e){console.error(e);toast('שגיאה בשמירה','error')}
 }
 
@@ -80,7 +82,8 @@ async function loadState(password){
     supabaseUrl:typeof ds.supabaseUrl==='string'?ds.supabaseUrl:(typeof ds.cloudVaultUrl==='string'&&/supabase\.co/i.test(ds.cloudVaultUrl)?ds.cloudVaultUrl:''),
     supabaseAnonKey:typeof ds.supabaseAnonKey==='string'?ds.supabaseAnonKey:'',
     supabaseAuthEmail:typeof ds.supabaseAuthEmail==='string'?ds.supabaseAuthEmail:(typeof ds.cloudVaultEmail==='string'?ds.cloudVaultEmail:''),
-    operators:Array.isArray(ds.operators)?ds.operators:[]
+    operators:Array.isArray(ds.operators)?ds.operators:[],
+    teamWorkspaceId:typeof ds.teamWorkspaceId==='string'&&ds.teamWorkspaceId.trim()?ds.teamWorkspaceId.trim():null
   })});
   embeddedSupabaseDefaults(out.settings);
   return out;
